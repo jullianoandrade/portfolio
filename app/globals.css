@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Tokens
+
+   Um acento só, âmbar. Precedente no gerador de laudo (#9A6F35) e
+   deliberadamente longe do azul-roxo que marca portfólio de template.
+
+   Tema: segue o sistema por padrão; `data-tema` no <html> sobrepõe, para
+   o alternador funcionar sem recarregar.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --fundo: #fbfaf8;
+  --fundo-elevado: #ffffff;
+  --fundo-afundado: #f2efea;
+
+  --tinta: #16130f;
+  --tinta-suave: #4a443c;
+  --tinta-fraca: #7d7568;
+
+  --acento: #8a5a1c;
+  --acento-forte: #6d4614;
+  --acento-fraco: #f0e4d2;
+
+  --regua: #e2dcd2;
+  --regua-forte: #cdc4b6;
+
+  --sombra: 0 1px 2px rgb(22 19 15 / 0.05), 0 8px 24px rgb(22 19 15 / 0.05);
+
+  --medida: 68ch;
+  --borda-raio: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fundo: #0e0d0b;
+    --fundo-elevado: #171512;
+    --fundo-afundado: #080706;
+
+    --tinta: #f3efe8;
+    --tinta-suave: #bdb5a8;
+    --tinta-fraca: #8a8277;
+
+    --acento: #e0a954;
+    --acento-forte: #f0c884;
+    --acento-fraco: #2b2114;
+
+    --regua: #2a2621;
+    --regua-forte: #3d372f;
+
+    --sombra: none;
+  }
+}
+
+:root[data-tema="escuro"] {
+  --fundo: #0e0d0b;
+  --fundo-elevado: #171512;
+  --fundo-afundado: #080706;
+
+  --tinta: #f3efe8;
+  --tinta-suave: #bdb5a8;
+  --tinta-fraca: #8a8277;
+
+  --acento: #e0a954;
+  --acento-forte: #f0c884;
+  --acento-fraco: #2b2114;
+
+  --regua: #2a2621;
+  --regua-forte: #3d372f;
+
+  --sombra: none;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-fundo: var(--fundo);
+  --color-fundo-elevado: var(--fundo-elevado);
+  --color-fundo-afundado: var(--fundo-afundado);
+  --color-tinta: var(--tinta);
+  --color-tinta-suave: var(--tinta-suave);
+  --color-tinta-fraca: var(--tinta-fraca);
+  --color-acento: var(--acento);
+  --color-acento-forte: var(--acento-forte);
+  --color-acento-fraco: var(--acento-fraco);
+  --color-regua: var(--regua);
+  --color-regua-forte: var(--regua-forte);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   Base
+   ============================================================ */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fundo);
+  color: var(--tinta);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--acento-fraco);
+  color: var(--acento-forte);
+}
+
+:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Rótulo técnico: versalete monoespaçado, para metadados e numeração. */
+.rotulo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinta-fraca);
+}
+
+/* ============================================================
+   Revelação por scroll
+
+   O JavaScript só alterna a classe `.visivel`; quem anima é o CSS.
+   Mesmo critério do economize_milhas: não há JS medindo tela.
+
+   O estado inicial oculto só vale quando `js-pronto` existe no <html>.
+   Sem JavaScript o conteúdo aparece — nunca uma página em branco por
+   causa de animação.
+   ============================================================ */
+
+.js-pronto .revelar {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--atraso, 0ms);
+}
+
+.js-pronto .revelar.visivel {
+  opacity: 1;
+  transform: none;
+}
+
+/* O grafo se monta nó a nó. O atraso de cada nó vem inline, calculado a partir
+   do índice — o CSS só consome a variável. */
+.js-pronto .diagrama .no,
+.js-pronto .diagrama .aresta {
+  opacity: 0;
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--atraso, 0ms);
+}
+
+.js-pronto .diagrama .no {
+  transform: translateY(8px);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.js-pronto .diagrama.visivel .no {
+  opacity: 1;
+  transform: none;
+}
+
+.js-pronto .diagrama.visivel .aresta {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .js-pronto .revelar,
+  .js-pronto .revelar.visivel {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* O diagrama aparece inteiro e parado — a informação é a mesma. */
+  .js-pronto .diagrama .no,
+  .js-pronto .diagrama .aresta,
+  .js-pronto .diagrama.visivel .no,
+  .js-pronto .diagrama.visivel .aresta {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
