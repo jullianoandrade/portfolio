@@ -1,0 +1,278 @@
+/* ============================================================
+   Prévia — A Vista Explodida
+
+   Grafite e traço fino de desenho técnico. A explosão é 100% CSS: uma
+   view-timeline na seção dirige a animação das peças pela rolagem. Não há
+   uma linha de JavaScript nesta interação.
+
+   Onde o navegador não suporta animation-timeline, ou com movimento
+   reduzido, o sistema aparece já explodido e parado — a informação é a
+   mesma, só não se move.
+   ============================================================ */
+
+.ex {
+  --ex-fundo: #111213;
+  --ex-traco: #e9e6df;
+  --ex-suave: #a7a49d;
+  --ex-fraca: #6d6b66;
+  --ex-regua: #2a2b2c;
+  --ex-marca: #ff7a59;
+
+  min-height: 100vh;
+  /* clip, não hidden: hidden criaria um contêiner de rolagem e quebraria o
+     position: sticky do palco. */
+  overflow-x: clip;
+  background:
+    linear-gradient(var(--ex-regua) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--ex-regua) 1px, transparent 1px) 0 0 / 32px 32px,
+    var(--ex-fundo);
+  background-blend-mode: normal;
+  color: var(--ex-traco);
+}
+
+.ex-sans {
+  font-family: var(--font-plex-sans), system-ui, sans-serif;
+}
+
+.ex-mono {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+.ex-rotulo {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ex-fraca);
+}
+
+/* --------------------------------------------------------------- cena */
+.ex-cena {
+  position: relative;
+  height: 360vh;
+  view-timeline: --ex-cena block;
+}
+
+.ex-palco {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+}
+
+.ex-montagem {
+  /* Altura de uma peça. A pilha montada e o invólucro derivam dela. */
+  --h: 76px;
+  --mx: 0px;
+  position: relative;
+  width: min(760px, 94vw);
+  height: min(560px, 78svh);
+  container-type: size;
+}
+
+/* Contorno tracejado do invólucro: mostra onde as peças cabiam juntas. */
+.ex-involucro {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 250px;
+  height: calc(5 * (var(--h) + 2px) + 12px);
+  transform: translate(-50%, -50%);
+  border: 1px dashed var(--ex-fraca);
+  border-radius: 4px;
+}
+
+.ex-peca {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 220px;
+  /* Altura fixa: a função fica invisível quando montado, mas continua ocupando
+     espaço. Sem altura fixa, as peças ficavam mais altas que o espaçamento e se
+     sobrepunham de forma irregular. */
+  height: var(--h);
+  --my: calc(var(--k, 0) * (var(--h) + 2px));
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--ex-traco);
+  background: var(--ex-fundo);
+  transform: translate(-50%, -50%) translate(var(--mx), var(--my));
+}
+
+.ex-peca[data-enfase] {
+  border-color: var(--ex-marca);
+  box-shadow: 0 0 0 3px rgb(255 122 89 / 0.12);
+}
+
+.ex-numero {
+  color: var(--ex-marca);
+  margin-right: 0.4rem;
+}
+
+.ex-funcao {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--ex-suave);
+}
+
+.ex-resultado {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  text-align: center;
+}
+
+.ex-dica {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ---------------------------------------- a explosão, guiada pela rolagem */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ex-peca {
+      animation: ex-explodir linear both;
+      animation-timeline: --ex-cena;
+      animation-range: contain 0% contain 100%;
+    }
+
+    .ex-funcao {
+      animation: ex-legenda linear both;
+      animation-timeline: --ex-cena;
+      animation-range: contain 0% contain 100%;
+    }
+
+    .ex-resultado {
+      animation: ex-resultado linear both;
+      animation-timeline: --ex-cena;
+      animation-range: contain 70% contain 100%;
+    }
+
+    .ex-dica {
+      animation: ex-dica linear both;
+      animation-timeline: --ex-cena;
+      animation-range: contain 0% contain 15%;
+    }
+  }
+}
+
+/* Montado → explodido → remontado. O platô do meio é onde se lê. */
+@keyframes ex-explodir {
+  0%,
+  8% {
+    transform: translate(-50%, -50%) translate(var(--mx), var(--my));
+  }
+  38%,
+  72% {
+    transform: translate(-50%, -50%) translate(var(--dx), var(--dy));
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(var(--mx), var(--my));
+  }
+}
+
+@keyframes ex-legenda {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  38%,
+  70% {
+    opacity: 1;
+  }
+  88%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes ex-resultado {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes ex-dica {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------ sem suporte ou com movimento reduzido:
+   o sistema aparece explodido e parado. */
+@supports not (animation-timeline: view()) {
+  .ex-cena {
+    height: auto;
+  }
+
+  .ex-palco {
+    position: static;
+    height: auto;
+    padding: 4rem 0;
+  }
+
+  .ex-peca {
+    transform: translate(-50%, -50%) translate(var(--dx), var(--dy));
+  }
+
+  .ex-dica {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ex-cena {
+    height: auto;
+  }
+
+  .ex-palco {
+    position: static;
+    height: auto;
+    padding: 4rem 0;
+  }
+
+  .ex-peca {
+    transform: translate(-50%, -50%) translate(var(--dx), var(--dy));
+  }
+
+  .ex-dica {
+    display: none;
+  }
+}
+
+/* No celular a montagem é estreita: as peças encolhem e a função vira uma
+   linha só, para caberem explodidas sem se sobrepor. */
+@media (max-width: 640px) {
+  .ex-montagem {
+    --h: 94px;
+  }
+
+  .ex-peca {
+    width: 150px;
+    padding: 0.45rem 0.55rem;
+    font-size: 0.8rem;
+  }
+
+  .ex-funcao {
+    font-size: 0.6875rem;
+  }
+
+  .ex-involucro {
+    width: 170px;
+  }
+}

@@ -1,0 +1,202 @@
+/* ============================================================
+   Prévia — O Contrato
+
+   Carvão quente, tipografia de livro, um acento só: a brasa do Sentido.
+   Nada de pergaminho amarelo nem ornamento: a referência é a ficha do
+   contrato, não um cenário de fantasia.
+   ============================================================ */
+
+.ct {
+  --ct-fundo: #15110d;
+  --ct-ficha: #1d1813;
+  --ct-tinta: #efe5d3;
+  --ct-suave: #b9ab94;
+  --ct-fraca: #7c715f;
+  --ct-regua: #3a3027;
+  --ct-brasa: #e8a44a;
+  --ct-selo: #b2432f;
+
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--ct-fundo);
+  color: var(--ct-tinta);
+}
+
+/* Textura de papel: filtro SVG inline, sem imagem para baixar. Quase invisível
+   de propósito — se dá para notar de longe, passou do ponto. */
+.ct-textura {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: soft-light;
+}
+
+.ct-serif {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.ct-rotulo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ct-fraca);
+}
+
+/* ---------------------------------------------------------- holofote */
+.ct-holofote {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    260px circle at var(--x, -999px) var(--y, -999px),
+    rgb(232 164 74 / 0.07),
+    transparent 70%
+  );
+  z-index: 1;
+}
+
+.ct-botao {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--ct-regua);
+  border-radius: 999px;
+  padding: 0.65rem 1.15rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ct-suave);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.ct-botao:hover,
+.ct-botao[aria-pressed="true"] {
+  color: var(--ct-brasa);
+  border-color: var(--ct-brasa);
+}
+
+.ct-botao[aria-pressed="true"] {
+  box-shadow: 0 0 24px rgb(232 164 74 / 0.25);
+}
+
+.ct-olho {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ------------------------------------------------------------- ficha */
+.ct-ficha {
+  position: relative;
+  z-index: 2;
+  border: 1px solid var(--ct-regua);
+  background: var(--ct-ficha);
+  padding: 1.75rem;
+  transition: border-color 0.3s;
+}
+
+.ct-ficha:hover,
+.ct-ficha:focus-within {
+  border-color: #5a4a38;
+}
+
+.ct-pedido {
+  border-left: 2px solid var(--ct-regua);
+  padding-left: 1rem;
+  color: var(--ct-suave);
+  font-style: italic;
+}
+
+/* Rastro: o que estava escondido. Apagado até o Sentido acender — ou até a
+   pessoa passar o mouse na ficha, que é a lente de cada contrato. */
+.ct-rastro {
+  color: var(--ct-fraca);
+  transition:
+    color 0.45s ease,
+    text-shadow 0.45s ease;
+}
+
+[data-sentido="on"] .ct-rastro,
+.ct-ficha:hover .ct-rastro,
+.ct-ficha:focus-within .ct-rastro {
+  color: var(--ct-brasa);
+  text-shadow: 0 0 14px rgb(232 164 74 / 0.5);
+}
+
+/* "Lá na frente" só some quando há JavaScript para trazer de volta. Sem JS,
+   aparece — nunca um conteúdo inalcançável por causa de interação. */
+.ct-lafrente {
+  display: grid;
+  gap: 0.35rem;
+  transition:
+    opacity 0.5s ease,
+    max-height 0.5s ease;
+}
+
+.js-pronto .ct-lafrente {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.js-pronto [data-sentido="on"] .ct-lafrente,
+.js-pronto .ct-ficha:hover .ct-lafrente,
+.js-pronto .ct-ficha:focus-within .ct-lafrente {
+  max-height: 12rem;
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------- selo */
+.ct-selo {
+  display: inline-block;
+  border: 1.5px solid var(--ct-selo);
+  color: var(--ct-selo);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+}
+
+.js-pronto .revelar .ct-selo {
+  opacity: 0;
+}
+
+.js-pronto .revelar.visivel .ct-selo {
+  animation: ct-carimbar 0.5s cubic-bezier(0.2, 1.5, 0.4, 1) 0.4s both;
+}
+
+@keyframes ct-carimbar {
+  from {
+    opacity: 0;
+    transform: scale(1.8) rotate(-14deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-rastro,
+  .ct-lafrente,
+  .ct-botao {
+    transition: none;
+  }
+
+  .js-pronto .revelar .ct-selo,
+  .js-pronto .revelar.visivel .ct-selo {
+    opacity: 1;
+    animation: none;
+  }
+}
