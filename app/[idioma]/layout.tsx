@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Marcellus_SC } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import { IDIOMAS, ehIdioma, obterConteudo } from "@/conteudo";
@@ -7,6 +7,8 @@ import "../globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+// Versalete gravado, só no nome: a assinatura do hero.
+const gravura = Marcellus_SC({ variable: "--fonte-gravura", weight: "400", subsets: ["latin"] });
 
 /**
  * Este é o layout raiz da aplicação: não existe `app/layout.tsx`.
@@ -59,7 +61,7 @@ export default async function LayoutRaiz({
   return (
     <html
       lang={idioma === "pt" ? "pt-BR" : "en"}
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${geistSans.variable} ${geistMono.variable} ${gravura.variable} h-full`}
       suppressHydrationWarning
     >
       <head>

@@ -16,7 +16,6 @@ export const pt: Conteudo = {
     nome: "Juliano Andrade",
     titulo: "AI Engineer",
     localizacao: "Gravataí, RS · Brasil",
-    disponibilidade: "Aberto a oportunidades · CLT ou PJ · presencial em POA ou remoto",
     arco: [
       "Entrei no Grupo Studio como o primeiro profissional de automação da empresa. Não havia área, não havia processo e não havia ferramenta — havia planilha, portal de governo e muita gente repetindo a mesma tarefa.",
       "Montei a prática do zero: escolhi as ferramentas, defini como um robô entra em produção e como ele avisa quando quebra, e treinei o time que veio depois. É por isso que meu repertório é largo — eu era o único, então passei por tudo.",
@@ -24,7 +23,7 @@ export const pt: Conteudo = {
     ],
     trajetoria: [
       {
-        periodo: "2024 — hoje",
+        periodo: "nov/2025 — hoje",
         cargo: "Engenheiro de IA e Automação",
         organizacao: "Grupo Studio",
         descricao:
@@ -44,12 +43,14 @@ export const pt: Conteudo = {
 
   interface: {
     navegacao: {
-      sobre: "Sobre",
-      capacidades: "Capacidades",
-      casos: "Casos",
-      contato: "Contato",
+      passei: "Por onde passei",
+      casos: "O que eu construí",
+      time: "O time",
+      contato: "Fale comigo",
     },
-    heroChamada: "Construo sistemas de IA que aguentam produção.",
+    heroChamada: "Escuto o gargalo, enxergo o sistema que ainda não existe e coloco ele para rodar.",
+    heroAmplitude: (sistemas, dominios) =>
+      `${sistemas} sistemas em ${dominios.length} domínios: ${new Intl.ListFormat("pt-BR").format(dominios)}.`,
     heroSubtitulo:
       "Agentes, recuperação sobre base própria e avaliação automatizada — em varejo, jurídico, trabalhista e consumo. Cheguei numa empresa onde não havia área de automação e montei a prática do zero.",
     verCaso: "Ver o caso",
@@ -77,6 +78,40 @@ export const pt: Conteudo = {
       timeCom: (pessoas) => `Em time de ${pessoas}`,
     },
     trocarIdioma: "English",
+    abertura: {
+      fragmentos: [
+        "ticket #412 · cliente sem resposta desde 22h",
+        "a equipe lê contrato por contrato",
+        "análise do cliente: 4 dias",
+        "16 milhões de linhas · o notebook travou",
+        "Re: Re: precisamos de IA, por onde começar?",
+        "quem confere o que a IA responde?",
+        "a IA esqueceu a conversa de ontem",
+        "POC aprovada… e agora, produção?",
+        "o laudo tomou a tarde do especialista",
+      ],
+      marcas: ["Re: o bot inventou preço de novo", "jurídico: posso mandar o contrato pro ChatGPT?", "funciona na demo, quebra em escala"],
+      rotuloGargalo: "Gargalo",
+      rotuloPendencias: "Perguntas sem resposta",
+      parado: "parado",
+      familiares: {
+        escriba: "Escriba",
+        triador: "Triador",
+        guardiao: "Guardião",
+        arquiteto: "Arquiteto",
+        mensageiro: "Mensageiro",
+        vigia: "Vigia",
+      },
+      fraseDeEfeito: "Resolvo qualquer gargalo, em qualquer empresa.",
+      carimbo: "Não passa",
+      comentarioGuardiao: "“Qualquer” não se prova. Troquei pelo número.",
+      comentarioVigia: "Isso aqui quebra em escala.",
+      respostaTriador: "Li em colunas, fora da memória.",
+      resolvido: "resolvido",
+      pular: "Pular",
+      credito: "Montado na sua frente por Juliano + 6 agentes",
+      verDeNovo: "ver de novo",
+    },
   },
 
   capacidades: [
@@ -120,6 +155,15 @@ export const pt: Conteudo = {
   casos: [
     {
       slug: "agente-conversacional",
+      vitrine: {
+        etiqueta: "clientes",
+        detalhe: "3 empresas, mesma arquitetura",
+        curto: "Atendimento",
+        gargalo:
+          "A pessoa escreve em rajada, o canal reentrega a mensagem e a conversa precisa lembrar de ontem.",
+        resultado:
+          "Conduz a conversa inteira e entrega ao especialista com briefing pronto. 14 cenários de avaliação rodam em CI.",
+      },
       titulo: "Um agente que atende no WhatsApp e sabe a hora de chamar um humano",
       resumo:
         "Atendimento consultivo por WhatsApp: entende a necessidade, recomenda a partir de catálogo próprio, responde dúvida conceitual por RAG e passa para um especialista com briefing pronto.",
@@ -241,20 +285,19 @@ export const pt: Conteudo = {
       ],
       aprendizado:
         "Guardrail dentro do prompt é pedido; guardrail fora do prompt é garantia. Passei a tratar a saída do modelo como entrada não confiável — a mesma postura que qualquer um tem com entrada de usuário, e que por algum motivo se perde quando o texto vem de um LLM.",
-      stack: [
-        "Python",
-        "FastAPI",
-        "LangGraph",
-        "PostgreSQL",
-        "pgvector",
-        "OpenAI",
-        "Langfuse",
-        "Docker",
-      ],
+      stack: ["LangGraph", "Python", "FastAPI", "PostgreSQL", "RAG", "LLM", "Langfuse", "Docker"],
     },
 
     {
       slug: "economize-milhas",
+      vitrine: {
+        etiqueta: "proprio",
+        detalhe: "Código aberto",
+        curto: "Milhas",
+        gargalo:
+          "Todo comparador responde igual para todo mundo, como se a milha tivesse um preço universal.",
+        resultado: "No ar, com o código aberto e 328 testes cobrindo do cálculo à interface.",
+      },
       titulo: "Esta passagem vale mais em milhas ou em dinheiro?",
       resumo:
         "A resposta muda conforme quem pergunta: quem tem cartão sem anuidade acumula milha a custo quase zero, quem compra ponto paga caro. O app calcula para o custo por milheiro de cada pessoa.",
@@ -311,6 +354,15 @@ export const pt: Conteudo = {
 
     {
       slug: "laudo-enquadramento",
+      vitrine: {
+        etiqueta: "interno",
+        detalhe: "Equipe de Lei do Bem",
+        curto: "Laudo",
+        gargalo:
+          "O primeiro rascunho do laudo consumia horas de especialista, para ser revisado de qualquer forma.",
+        resultado:
+          "O rascunho sai durante a própria reunião. O especialista entra para revisar, não para redigir.",
+      },
       titulo: "Laudo técnico preliminar redigido por modelo de linguagem",
       resumo:
         "Um apresentador percorre um checklist guiado com a empresa avaliada e o sistema redige um laudo preliminar de enquadramento de projetos de PD&I, entregue em PDF.",
@@ -363,6 +415,15 @@ export const pt: Conteudo = {
 
     {
       slug: "ingestao-em-escala",
+      vitrine: {
+        etiqueta: "interno",
+        detalhe: "Operacional",
+        curto: "16 mi de linhas",
+        gargalo:
+          "Milhões de eventos trabalhistas para cruzar num notebook de trabalho. Linha a linha, em memória, a importação arrastava.",
+        resultado:
+          "Mais de 16 milhões de linhas cruzadas em hardware de escritório, sem infraestrutura dedicada.",
+      },
       titulo: "Dezesseis milhões de linhas rodando no notebook do analista",
       resumo:
         "Plataforma que lê arquivos de eventos trabalhistas compactados, converte para formato colunar e cruza os eventos entre si para apurar créditos previdenciários.",
@@ -423,6 +484,15 @@ export const pt: Conteudo = {
 
     {
       slug: "contratos-bancarios",
+      vitrine: {
+        etiqueta: "interno",
+        detalhe: "Equipe jurídica",
+        curto: "Contratos",
+        gargalo:
+          "Dezenas de páginas para achar a cláusula e refazer a conta, num documento cheio de dado pessoal.",
+        resultado:
+          "O especialista revisa em vez de procurar. Cada número vem com a cláusula de onde saiu.",
+      },
       titulo: "Achar juros abusivos em contrato bancário sem mostrar o cliente ao modelo",
       resumo:
         "Arquitetura que extrai e analisa cláusulas de contratos bancários para identificar possíveis juros abusivos, com os dados pessoais mascarados antes de qualquer inferência.",
@@ -484,4 +554,571 @@ export const pt: Conteudo = {
       stack: ["Python", "FastAPI", "Mistral AI", "Presidio", "pdfplumber", "Pydantic"],
     },
   ],
+
+  cenas: {
+    trilho: {
+      inicio: "Início",
+      passei: "Por onde passei",
+      casos: "O que eu construí",
+      time: "O time",
+      contato: "Fale comigo",
+    },
+    passei: {
+      rotulo: "Por onde passei",
+      empresa: "Grupo Studio · nov/2025 — hoje",
+      titulo: ["Cinco setores.", "O mesmo olhar."],
+      texto:
+        "Comecei no marketing. Hoje estou perto do jurídico. Em cada setor, a mesma pergunta: onde está o gargalo?",
+      marcos: { inicio: "Início", hoje: "Hoje" },
+      etiquetas: { interno: "Uso interno", clientes: "Para clientes", proprio: "Produto próprio" },
+      convite: "Clique num andar que eu te levo.",
+      setores: [
+        {
+          id: "marketing",
+          nome: "Marketing",
+          marco: "inicio",
+          sistemas: [{ nome: "Quiz de leads com LLM" }],
+          titulo: "Um quiz que qualifica o lead",
+          descricao:
+            "Uma LLM lê as respostas do quiz, orienta o lead para o produto que mais combina, cadastra no CRM e gera um gráfico da similaridade dele com cada produto.",
+          resultados: [],
+          fala: "Foi aqui que tudo começou.",
+          agente: "mensageiro",
+        },
+        {
+          id: "corporate",
+          nome: "Corporate",
+          sistemas: [{ nome: "Classificação de clientes" }],
+          titulo: "Clientes classificados pelos próprios dados",
+          descricao:
+            "Classificação automática de cada cliente a partir dos dados dele, como conta de luz e número de colaboradores.",
+          resultados: [],
+          fala: "Aqui os dados viraram critério.",
+          agente: "triador",
+        },
+        {
+          id: "operacional",
+          nome: "Operacional",
+          sistemas: [
+            { nome: "Fluxos manuais → automáticos" },
+            { nome: "16 mi de linhas", caso: "ingestao-em-escala" },
+          ],
+          titulo: "Do manual ao automático",
+          descricao:
+            "Mapeei o que o time fazia à mão e coloquei para rodar sozinho. Alguns setores ficaram quase 100% automatizados.",
+          etiqueta: "interno",
+          resultados: [
+            { valor: "2×", rotulo: "jobs entregues pelo setor, recorde histórico" },
+            { valor: "4d→1d", rotulo: "análise de cada cliente, de 4 dias para 1" },
+          ],
+          fala: "O operacional foi onde virou rotina.",
+          agente: "vigia",
+        },
+        {
+          id: "lei-do-bem",
+          nome: "Lei do Bem",
+          sistemas: [{ nome: "Laudo técnico com LLM", caso: "laudo-enquadramento" }],
+          titulo: "O laudo que sai durante a reunião",
+          descricao:
+            "Um checklist guiado com a empresa avaliada e um modelo que redige o laudo preliminar de enquadramento, para o especialista revisar.",
+          etiqueta: "interno",
+          resultados: [],
+          fala: "Aqui o modelo escreve e o especialista revisa.",
+          agente: "arquiteto",
+        },
+        {
+          id: "juridico",
+          nome: "Jurídico",
+          marco: "hoje",
+          sistemas: [
+            { nome: "Plataforma do jurídico" },
+            { nome: "Juros em contrato", caso: "contratos-bancarios" },
+          ],
+          titulo: "Inovação dentro do jurídico",
+          descricao:
+            "Hoje toco uma plataforma do braço jurídico e aplico IA onde ela encurta o trabalho. A análise de juros em contrato bancário saiu daqui.",
+          etiqueta: "interno",
+          resultados: [],
+          fala: "É aqui que ele está hoje.",
+          agente: "escriba",
+        },
+      ],
+      porConta: "Por conta própria",
+      proprios: [
+        { sistema: "Agente de atendimento", caso: "agente-conversacional", nota: "Vendido a 3 empresas" },
+        { sistema: "Economize Milhas", caso: "economize-milhas", nota: "No ar · código aberto" },
+      ],
+    },
+    pranchas: {
+      rotulo: "O que eu construí",
+      titulo: "Seis sistemas, rodando.",
+      verDetalhes: "Ver detalhes",
+      fechar: "Fechar",
+      anterior: "Sistema anterior",
+      proximo: "Próximo sistema",
+      rodando: "rodando",
+      montando: "Um segundo: desenho a planta antes de ela rodar.",
+      montado: "Pronta. Agora ela roda sozinha.",
+      arquitetura: "arquitetura",
+      escolha: "escolha um cenário",
+      vazio: "Escolha um cenário acima para rodar o sistema.",
+      legenda: "— rota · - - condicional",
+      simulada: "execução simulada · dados fictícios",
+      casoCompleto: "Ver o caso completo",
+      porTras: "Por trás da entrega",
+      cliente: "cliente",
+      agente: "agente",
+      taxa: "taxa efetiva {taxa}% a.m. · média publicada 1,90% a.m. (fictícia)",
+      milhas: {
+        controle: "Seu custo por milheiro",
+        passagem: "R$ 1.800 em dinheiro, ou 60.000 milhas + R$ 80 (exemplo)",
+        calculo: "60 milheiros × R$ {m} + R$ 80 = R$ {total}",
+        emMilhas: "Para você, vale mais em milhas.",
+        emDinheiro: "Para você, vale mais pagar em dinheiro.",
+        falaMilhas: "Com o seu milheiro, a milha vale mais. Suba o custo e veja virar.",
+        falaDinheiro: "A sua milha está cara: pague em dinheiro. A resposta é sua, não universal.",
+        nota: "versão simplificada da conta do app",
+      },
+      itens: [
+        {
+          id: "atendimento",
+          nome: "Arquitetura agêntica de atendimento",
+          caso: "agente-conversacional",
+          setor: "Comercial · 3 empresas",
+          dono: "guardiao",
+          titulo: "Atende no WhatsApp, agenda na agenda real e sabe a hora de chamar um humano.",
+          numero: "em produção no comercial de 3 empresas · 14 cenários de avaliação em CI",
+          fala: "Ele pode escrever o que quiser. Preço fora do catálogo não sai daqui.",
+          reacao: "Passou pelo guard. Conferido.",
+          corpo:
+            "Uma arquitetura só, adaptada a cada empresa: recebe o cliente, leva os dados ao CRM, marca a reunião e entrega o especialista com o briefing pronto.",
+          stack: ["LangGraph", "Python", "FastAPI", "PostgreSQL", "RAG", "LLM", "Langfuse", "Docker"],
+          porTras: [
+            "O guard roda sobre o texto pronto, depois de compor: a saída do modelo é entrada não confiável.",
+            "Estado tipado em vez de dicionário solto.",
+            "Telefone pseudonimizado antes de sair do processo.",
+            "Dois motores, trocados por variável de ambiente: rollback sem redeploy.",
+          ],
+          nos: {
+            carregar: { rotulo: "carregar", sub: "memória" },
+            entender: { rotulo: "entender", sub: "intenção" },
+            decidir: { rotulo: "decidir", sub: "roteia" },
+            recuperar: { rotulo: "recuperar", sub: "catálogo · RAG" },
+            agendar: { rotulo: "agendar", sub: "agenda real" },
+            compor: { rotulo: "compor" },
+            guard: { rotulo: "guard", sub: "barreira de saída" },
+            persistir: { rotulo: "persistir", sub: "Postgres · CRM" },
+            handoff: { rotulo: "handoff", sub: "humano + briefing" },
+          },
+          cenarios: [
+            {
+              rotulo: "Atendem sábado?",
+              cliente: "Atendem sábado?",
+              caminho: ["carregar", "entender", "decidir", "agendar", "compor", "guard", "persistir"],
+              eventos: {
+                entender: { t: "intenção: horário · dia: sábado" },
+                decidir: { t: "rota → agendar" },
+                agendar: {
+                  t: "agenda real: sáb 10h · sáb 14h",
+                  fala: ["arquiteto", "O horário veio da agenda de verdade. O modelo só escreveu a frase em volta."],
+                },
+                guard: { t: "ok: nenhum preço, nenhum prazo inventado" },
+              },
+              resposta: "Atendemos! Tenho sábado às 10h ou às 14h. Qual fica melhor?",
+            },
+            {
+              rotulo: "Quanto custa aquele da loja?",
+              cliente: "Quanto custa aquele da loja?",
+              caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
+              eventos: {
+                entender: { t: "intenção: preço · produto: ambíguo" },
+                recuperar: { t: "catálogo: item não identificado" },
+                compor: { t: "rascunho: “Fica R$ 1.299 à vista.”" },
+                guard: {
+                  t: "~~“Fica R$ 1.299 à vista.”~~ preço fora do catálogo",
+                  mal: true,
+                  fala: ["guardiao", "Esse preço não está no catálogo. Não passa."],
+                },
+                handoff: { t: "briefing → especialista", fala: ["mensageiro", "Chamei um humano, com o resumo da conversa."] },
+              },
+              resposta: "Esse eu confirmo com um especialista. Já passei seu pedido para ele.",
+            },
+            {
+              rotulo: "Quero falar com alguém",
+              cliente: "Quero falar com alguém",
+              caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
+              eventos: {
+                carregar: { t: "memória: a conversa de ontem", fala: ["vigia", "Ele lembra de ontem. Nada se perde no redeploy."] },
+                decidir: { t: "rota → humano" },
+                handoff: {
+                  t: "briefing → especialista",
+                  fala: ["mensageiro", "Ninguém conta a história de novo: o especialista recebe o briefing, não a transcrição."],
+                },
+              },
+              resposta: "Claro. Passei sua conversa para um especialista, ele te chama aqui mesmo.",
+            },
+          ],
+        },
+        {
+          id: "diagnostico",
+          nome: "Ecossistema de diagnóstico",
+          caso: "ingestao-em-escala",
+          setor: "Operações",
+          dono: "vigia",
+          titulo: "O diagnóstico de cada cliente caiu de 4 dias para 1. As entregas dobraram.",
+          numero: "análise 4 dias → 1 · entregas 2×, recorde histórico · 10+ RPAs em produção",
+          fala: "Os robôs rodam de madrugada. Eu fico de olho neles.",
+          reacao: "Viu? Li o print do robô antes de alguém chegar.",
+          corpo:
+            "API onde havia; onde não havia, robôs em VMs. Os documentos caem em pastas estruturadas, um importador colunar cruza tudo e, se um robô quebra de madrugada, uma IA lê o print do erro antes de alguém chegar.",
+          stack: ["Python", "Playwright", "OpenCV", "LLM", "DuckDB", "Polars", "Parquet"],
+          porTras: [
+            "Equipes inteiras saíram do trabalho operacional.",
+            "Colunar e fora da memória, em vez de linha a linha: 16 mi de linhas no hardware do escritório.",
+            "Fui o primeiro profissional da área; a equipe que formei hoje atende outros setores.",
+          ],
+          nos: {
+            portais: { rotulo: "portais", sub: "sem API" },
+            apis: { rotulo: "APIs" },
+            rpa: { rotulo: "10+ RPAs", sub: "VMs" },
+            pastas: { rotulo: "pastas", sub: "estruturadas" },
+            import: { rotulo: "importador", sub: "colunar" },
+            diag: { rotulo: "diagnóstico", sub: "do cliente" },
+            prints: { rotulo: "print do erro", sub: "madrugada" },
+            ia: { rotulo: "IA vigia", sub: "LLM com visão" },
+          },
+          cenarios: [
+            {
+              rotulo: "Uma noite normal",
+              caminho: ["portais", "rpa", "pastas", "import", "diag"],
+              eventos: {
+                rpa: { t: "robôs baixam os documentos de cada cliente" },
+                pastas: { t: "documentos em pastas estruturadas" },
+                import: {
+                  t: "16 mi de linhas, em colunas, fora da memória",
+                  fala: ["triador", "Separo antes de processar: só as colunas do cruzamento, direto do disco."],
+                },
+                diag: { t: "diagnóstico pronto: 1 dia, não 4", fala: ["vigia", "De manhã, o diagnóstico já está na mesa."] },
+              },
+            },
+            {
+              rotulo: "Um robô quebra",
+              caminho: ["portais", "rpa", "prints", "ia", "rpa", "pastas", "import", "diag"],
+              eventos: {
+                rpa: { t: "robô parou numa tela inesperada", mal: true },
+                prints: { t: "print do erro salvo", mal: true },
+                ia: {
+                  t: "IA lê o print: corrige ou deixa o diagnóstico para a manhã",
+                  fala: ["vigia", "Quebrou de madrugada? Eu leio o print antes de alguém chegar."],
+                },
+                "rpa#2": { t: "robô volta a rodar" },
+                diag: { t: "diagnóstico pronto mesmo assim" },
+              },
+            },
+          ],
+        },
+        {
+          id: "contratos",
+          nome: "Leitura de contratos com IA",
+          caso: "contratos-bancarios",
+          setor: "Jurídico",
+          dono: "escriba",
+          titulo: "Juros abusivos encontrados em contrato bancário sem o modelo ver o cliente.",
+          numero: "cada número sai com a cláusula de onde veio",
+          fala: "O modelo nunca viu quem assinou. Troquei os nomes antes de ele ler.",
+          reacao: "Nomes trocados. O modelo só vê [PESSOA_1].",
+          corpo:
+            "O contrato é mascarado antes de qualquer inferência. O modelo só extrai os campos; a taxa é calculada em código e comparada a uma referência pública.",
+          stack: ["Python", "FastAPI", "Mistral AI", "Presidio", "pdfplumber", "Pydantic"],
+          porTras: [
+            "O mascaramento acontece antes da inferência, não depois.",
+            "O modelo extrai, o código calcula.",
+            "Abusivo em relação a uma referência pública, não a um número fixo.",
+          ],
+          nos: {
+            pdf: { rotulo: "contrato", sub: "PDF" },
+            mask: { rotulo: "mascarar", sub: "Presidio" },
+            llm: { rotulo: "extrair", sub: "LLM · Pydantic" },
+            calc: { rotulo: "calcular", sub: "em código" },
+            ref: { rotulo: "referência", sub: "média publicada" },
+            res: { rotulo: "resultado", sub: "número + cláusula" },
+          },
+          cenarios: [
+            {
+              rotulo: "Analisar contrato fictício",
+              caminho: ["pdf", "mask", "llm", "calc", "res"],
+              eventos: {
+                pdf: { t: "contrato fictício · 31 páginas" },
+                mask: {
+                  t: "Maria S. → [PESSOA_1] · CPF → [CPF_1]",
+                  fala: ["escriba", "Dado pessoal não entra no prompt. Ele só lê [PESSOA_1]."],
+                },
+                llm: { t: "prazo 48 · financiado R$ 20.000 · parcela R$ 712" },
+                calc: { t: "{taxa}", fala: ["guardiao", "O modelo leu os números. Quem fez a conta foi o código."] },
+                res: { t: "acima da referência · cláusula 4.2 anexada", mal: true },
+              },
+            },
+          ],
+        },
+        {
+          id: "leads",
+          nome: "Captação de leads com LLM",
+          dominio: "Marketing",
+          setor: "Marketing",
+          dono: "triador",
+          titulo: "Um quiz com LLM que qualifica o lead e aposentou um CRM pago.",
+          numero: "substituiu um CRM com atendimento integrado de alto custo mensal",
+          fala: "Separo o lead antes de ele chegar no time. Ninguém perde tempo com ficha fria.",
+          reacao: "Esse eu já separei. Vai qualificado.",
+          corpo:
+            "O lead responde o quiz, um LLM qualifica as respostas e a gestão do setor fica num lugar só. Os leads seguem para o time de expansão fechar contrato.",
+          // PENDENTE: a stack do quiz (pedida ao Juliano).
+          stack: ["LLM"],
+          porTras: ["Menos uma mensalidade: o CRM pago saiu.", "A gestão de leads do setor ficou num lugar só."],
+          nos: {
+            quiz: { rotulo: "quiz", sub: "lead responde" },
+            llm: { rotulo: "qualificar", sub: "LLM" },
+            base: { rotulo: "base de leads", sub: "um lugar só" },
+            time: { rotulo: "time de expansão", sub: "fecha contrato" },
+          },
+          cenarios: [
+            {
+              rotulo: "Um lead responde",
+              caminho: ["quiz", "llm", "base", "time"],
+              eventos: {
+                quiz: { t: "respostas do lead recebidas" },
+                llm: {
+                  t: "lead qualificado pelas respostas",
+                  fala: ["triador", "Separar antes de processar. O time recebe o lead já qualificado."],
+                },
+                base: { t: "lead registrado, sem CRM pago" },
+                time: { t: "distribuído ao time de expansão", fala: ["mensageiro", "Chegou com contexto, não cru."] },
+              },
+            },
+          ],
+        },
+        {
+          id: "laudo",
+          nome: "Laudo técnico com LLM",
+          caso: "laudo-enquadramento",
+          setor: "Inovação · Lei do Bem",
+          dono: "arquiteto",
+          titulo: "O rascunho do laudo técnico sai antes de a reunião acabar.",
+          numero: "o especialista entra para revisar, não para redigir",
+          fala: "O que faltou vira pendência. O modelo aponta a lacuna, não preenche.",
+          reacao: "Uma chamada por projeto. Lacuna vira pendência.",
+          corpo:
+            "Os dados de cada projeto entram durante a reunião; uma chamada por projeto e mais uma para a conclusão. Quando falta informação, o laudo diz o que falta em vez de inventar.",
+          stack: ["Next.js", "TypeScript", "React", "LLM", "pdfmake", "Vercel"],
+          porTras: [
+            "Uma chamada por projeto, mais uma para a conclusão.",
+            "Erro trafega por código, não por mensagem.",
+            "Checklist de 5 etapas antes de qualquer texto.",
+          ],
+          nos: {
+            reuniao: { rotulo: "reunião", sub: "dados do projeto" },
+            proj: { rotulo: "1 chamada", sub: "por projeto" },
+            concl: { rotulo: "conclusão", sub: "1 chamada" },
+            pdf: { rotulo: "laudo", sub: "PDF" },
+            rev: { rotulo: "especialista", sub: "revisa" },
+          },
+          cenarios: [
+            {
+              rotulo: "Gerar laudo",
+              caminho: ["reuniao", "proj", "concl", "pdf", "rev"],
+              eventos: {
+                reuniao: { t: "checklist guiado: 5 etapas" },
+                proj: { t: "seção do projeto redigida" },
+                pdf: { t: "laudo preliminar em PDF" },
+                rev: {
+                  t: "revisão do responsável técnico",
+                  fala: ["arquiteto", "Antes da ferramenta, o checklist. O gargalo era o rascunho, não a revisão."],
+                },
+              },
+            },
+            {
+              rotulo: "Faltou uma informação",
+              caminho: ["reuniao", "proj", "concl", "pdf", "rev"],
+              eventos: {
+                proj: {
+                  t: "pendência: dado não informado",
+                  mal: true,
+                  fala: ["arquiteto", "Faltou dado? Vira pendência no laudo. Nada é inventado."],
+                },
+                pdf: { t: "laudo sai com a pendência marcada" },
+              },
+            },
+          ],
+        },
+        {
+          id: "milhas",
+          nome: "Economize Milhas",
+          caso: "economize-milhas",
+          setor: "Produto próprio · código aberto",
+          dono: "mensageiro",
+          titulo: "Milhas ou dinheiro? Depende de quanto a sua milha custou.",
+          numero: "no ar · código aberto · 328 testes",
+          fala: "Mexe no seu milheiro e veja a resposta virar.",
+          reacao: "A conta usa o seu milheiro, não um preço universal.",
+          corpo:
+            "Todo comparador responde igual para todo mundo, como se a milha tivesse um preço universal. Aqui a conta usa o que a milha custou para você.",
+          stack: ["Next.js", "TypeScript", "React", "Tailwind", "Supabase", "Vitest", "Vercel"],
+          porTras: ["O app funciona inteiro com tudo em branco.", "328 testes cobrindo do cálculo à interface."],
+          nos: {
+            entrada: { rotulo: "sua milha", sub: "custo do milheiro" },
+            calc: { rotulo: "cálculo", sub: "testado" },
+            milhas: { rotulo: "em milhas" },
+            din: { rotulo: "em dinheiro" },
+          },
+          cenarios: [],
+        },
+      ],
+    },
+    construi: {
+      rotulo: "O que eu construí",
+      anterior: "Sistema anterior",
+      proximo: "Próximo sistema",
+      gargalo: "Gargalo",
+      resultado: "Resultado",
+      porTras: "Por trás da entrega",
+      casoCompleto: "Ver o caso completo",
+      agente: {
+        instrucao: "Mande uma mensagem",
+        ficticia: "Conversa fictícia",
+        simulacoes: [
+          {
+            pergunta: "Atendem sábado?",
+            caminho: ["carregar", "entender", "decidir", "agendar", "compor", "guard", "persistir"],
+            dados: [{ no: "agendar", texto: "agenda real: sáb 10h · sáb 14h" }],
+            resposta: "Atendemos! Tenho sábado às 10h ou às 14h. Qual fica melhor?",
+            anfitriao: "arquiteto",
+            fala: ["Repara: o horário veio da agenda de verdade.", "O modelo só escreveu a frase em volta."],
+          },
+          {
+            pergunta: "Quanto custa aquele da loja?",
+            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
+            barrado: "“Fica R$ 1.299 à vista.”",
+            dados: [{ no: "handoff", texto: "briefing" }],
+            resposta: "Esse eu confirmo com um especialista. Já passei seu pedido para ele.",
+            anfitriao: "guardiao",
+            fala: ["Esse preço não está no catálogo. Não passa.", "Chamei um humano, com o resumo da conversa."],
+          },
+          {
+            pergunta: "Quero falar com alguém",
+            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
+            dados: [
+              { no: "carregar", texto: "memória: a conversa de ontem" },
+              { no: "handoff", texto: "briefing" },
+            ],
+            resposta: "Claro. Passei sua conversa para um especialista, ele te chama aqui mesmo.",
+            anfitriao: "mensageiro",
+            fala: ["Ninguém precisa contar a história de novo.", "O especialista recebe o briefing, não a transcrição."],
+          },
+        ],
+      },
+      contratos: {
+        instrucao: "Passe o mouse num número",
+        ficticio: "Contrato fictício",
+        passos: ["Contrato", "Máscara", "Modelo", "Código"],
+        campos: { prazo: "prazo", financiado: "financiado", parcela: "parcela" },
+        taxaEfetiva: "taxa efetiva",
+        mediaPublicada: "média publicada",
+        acima: "Acima da referência",
+        dentro: "Dentro da referência",
+        fala: ["O modelo nunca viu quem assinou.", "Troquei os nomes antes de ele ler."],
+      },
+      ingestao: {
+        linhaALinha: "Linha a linha",
+        emColunas: "Em colunas",
+        memoria: "Memória do notebook",
+        tabela: "Eventos trabalhistas",
+        estadoLinha: "Tudo em memória: a importação arrasta e parece travada.",
+        estadoColuna: "Só as colunas do cruzamento, lidas direto do disco.",
+        persistido: "Conversão gravada em disco: reexecutar não recomeça do zero.",
+        escala: "16 mi+ linhas numa apuração",
+        fala: ["Isso aqui quebrava em escala.", "Em colunas, fora da memória, cabe no notebook."],
+      },
+      laudo: {
+        gerar: "Gerar laudo",
+        faltou: "Faltou uma informação",
+        checklist: "Checklist guiado",
+        etapa: "Etapa",
+        projeto: "Projeto",
+        conclusao: "Conclusão",
+        chamada: "1 chamada",
+        secao: "Seção",
+        pendencia: "Pendência: dado não informado",
+        rodape: "Laudo preliminar · revisão de responsável técnico habilitado",
+        fala: ["O que faltou vira pendência.", "O modelo aponta a lacuna, não preenche."],
+      },
+      milhas: {
+        preco: "Preço em dinheiro (R$)",
+        milhas: "Milhas pedidas",
+        taxas: "Taxas (R$)",
+        milheiro: "Seu custo por milheiro (R$)",
+        emMilhas: "Em milhas",
+        emDinheiro: "Em dinheiro",
+        vereditoMilhas: "Para você, vale mais em milhas.",
+        vereditoDinheiro: "Para você, vale mais pagar em dinheiro.",
+        nota: "Versão simplificada da conta que o app faz.",
+        verNoAr: "Ver o app no ar",
+        fala: ["Mude o seu milheiro e veja a resposta virar.", "A milha não tem preço universal."],
+      },
+    },
+    time: {
+      rotulo: "O time",
+      titulo: ["Seis agentes,", "seis regras minhas."],
+      texto: "Cada um existe porque eu sigo uma regra. Passe o mouse para conhecer.",
+      montagem: {
+        mensageiro: "Trago o título. As letras caem no lugar.",
+        guardiao: "Conferi antes de liberar. Pode ler.",
+        carimbo: "conferido",
+      },
+      rotulos: { porQue: "Por que está aqui", onde: "Onde isso aparece" },
+      fichas: {
+        escriba: {
+          regra: "Dado pessoal não entra no prompt.",
+          porQue:
+            "Privacidade tratada como etapa do pipeline é verificável. Tratada como cláusula com o fornecedor, é promessa.",
+          onde: { texto: "Contratos: a máscara antes do modelo", caso: "contratos-bancarios" },
+        },
+        triador: {
+          regra: "Separar antes de processar.",
+          porQue:
+            "O trabalho pesado só fica rápido quando o dado chega separado: em colunas, fora da memória, convertido uma vez.",
+          onde: { texto: "16 milhões de linhas: a leitura em colunas", caso: "ingestao-em-escala" },
+        },
+        guardiao: {
+          regra: "O modelo propõe, o código confere.",
+          porQue:
+            "Trato saída de modelo como entrada não confiável. Pedir no prompt reduz a chance de erro; conferir a saída elimina o caso.",
+          onde: { texto: "Agente de atendimento: o nó guard", caso: "agente-conversacional" },
+        },
+        arquiteto: {
+          regra: "O gargalo vem antes da ferramenta.",
+          porQue:
+            "Antes de escolher modelo ou framework, procuro onde o trabalho trava. A ferramenta é consequência.",
+          onde: { texto: "Laudo: o checklist de 5 etapas", caso: "laudo-enquadramento" },
+        },
+        mensageiro: {
+          regra: "Entregar com contexto, não cru.",
+          porQue:
+            "Passar uma conversa para um humano é entregar o briefing pronto, não a transcrição inteira.",
+          onde: { texto: "Agente de atendimento: o handoff com briefing", caso: "agente-conversacional" },
+        },
+        vigia: {
+          regra: "Penso funcionando lá na frente.",
+          porQue: "Analiso tudo: segurança, escala. Penso no que estou fazendo funcionando lá na frente.",
+          onde: { texto: "Agente de atendimento: rollback sem redeploy", caso: "agente-conversacional" },
+        },
+      },
+    },
+    contato: {
+      rotulo: "Fale comigo",
+      titulo: "Vamos construir o próximo?",
+      texto: "Tem um projeto ou um processo travado? Me conta, e eu volto com o desenho do sistema.",
+      fala: "Escreve que eu levo. Ele responde.",
+      montagem: { escriba: "Deixa que eu escrevo." },
+    },
+  },
 };

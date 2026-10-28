@@ -1,0 +1,1167 @@
+/* ============================================================
+   Abertura
+
+   O JavaScript (Abertura.tsx) só põe classes cumulativas no <html> —
+   `abertura`, depois `e-para`, `e-marca`, `e-estalo`, `e-time`, `e-obra`,
+   `e-revisao`, `e-prova`, `e-fim` — e posiciona os familiares em px.
+   Tudo o que se move está aqui.
+
+   Sem `abertura` no <html>, nada deste arquivo aparece e o hero está
+   pronto: sem JavaScript, com movimento reduzido, na segunda visita da
+   sessão, ou depois de pular.
+   ============================================================ */
+
+.cena {
+  display: none;
+}
+
+html.abertura {
+  overflow: hidden;
+}
+
+html.abertura .cena {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--fundo);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  transition: background-color 0.9s ease;
+}
+
+/* O mundo é o que a câmera aproxima nas marcas (Abertura.tsx põe o
+   transform). Em repouso não tem transform, para não virar contexto de
+   empilhamento quando o time entra. */
+.cena-mundo {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  transition: transform var(--cam-dur, 0.55s) var(--cam-curva, cubic-bezier(0.45, 0, 0.2, 1));
+}
+
+/* Na obra a cena fica transparente: o que se vê montando é o hero real. */
+html.abertura.e-obra .cena {
+  background: transparent;
+}
+
+/* ------------------------------------------------- a página por baixo */
+
+html.abertura [data-obra],
+html.abertura [data-pouso] {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+html.abertura .letra {
+  opacity: 0;
+}
+
+/* O cabeçalho entra como uma caixa desenhada em latão (quadro 4). */
+html.abertura [data-obra="cabecalho"] > div > div {
+  outline: 1px solid transparent;
+  outline-offset: 6px;
+  transition: outline-color 0.5s ease;
+}
+
+html.abertura.e-obra [data-obra="cabecalho"] {
+  opacity: 1;
+}
+
+html.abertura.e-obra [data-obra="cabecalho"] > div > div {
+  outline-color: var(--acento);
+}
+
+html.abertura.e-fim [data-obra="cabecalho"] > div > div {
+  outline-color: transparent;
+}
+
+html.abertura.e-obra [data-obra="rotulo"],
+html.abertura.e-obra [data-obra="rotulo-casos"] {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+/* O Escriba digita o nome: cada letra acende na sua vez, com o cursor nela. */
+html.abertura.e-obra .letra {
+  animation:
+    letra-acende 1ms linear forwards,
+    letra-cursor 60ms steps(1);
+  animation-delay: calc(var(--i) * 60ms + 1.2s);
+}
+
+html.abertura.e-obra .letra:last-child {
+  animation:
+    letra-acende 1ms linear forwards,
+    cursor-pisca 0.8s steps(1) infinite;
+  animation-delay: calc(var(--i) * 60ms + 1.2s);
+}
+
+html.abertura.e-revisao .letra:last-child {
+  animation: letra-acende 1ms linear forwards;
+}
+
+@keyframes letra-acende {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes letra-cursor {
+  0% {
+    box-shadow: 0.06em 0 0 var(--acento-forte);
+  }
+}
+
+@keyframes cursor-pisca {
+  0% {
+    box-shadow: 0.06em 0 0 var(--acento-forte);
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+/* A frase de efeito ocupa o lugar da chamada até o Guardião passar por ela;
+   a chamada só entra no fim, quando o que sobrou é o que se sustenta. */
+.frase-efeito {
+  display: none;
+}
+
+html.abertura .frase-efeito {
+  display: block;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+html.abertura.e-obra .frase-efeito {
+  opacity: 1;
+  transition-delay: 2.4s;
+}
+
+html.abertura.e-fim .frase-efeito {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.frase-texto {
+  color: var(--tinta-suave);
+  text-decoration: line-through;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  transition:
+    text-decoration-color 0.4s ease,
+    color 0.4s ease;
+}
+
+html.abertura.e-revisao .frase-texto {
+  color: var(--tinta-fraca);
+  text-decoration-color: var(--gargalo);
+}
+
+.carimbo {
+  display: inline-block;
+  margin-left: 0.6em;
+  padding: 0.25em 0.7em;
+  border: 2px solid var(--gargalo);
+  color: var(--gargalo);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.55em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  vertical-align: 0.25em;
+  opacity: 0;
+  transform: rotate(-8deg) scale(1.7);
+  transition:
+    opacity 0.2s ease,
+    transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+
+html.abertura.e-revisao .carimbo {
+  opacity: 1;
+  transform: rotate(-8deg) scale(1);
+  transition-delay: 0.5s;
+}
+
+/* O número entra e acende em latão por um instante: é ele quem tomou o lugar
+   da frase riscada. */
+html.abertura.e-prova [data-obra="prova"] {
+  opacity: 1;
+  transition-delay: 0.4s;
+  animation: numero-entra 1.6s ease-out 0.4s backwards;
+}
+
+@keyframes numero-entra {
+  0%,
+  45% {
+    color: var(--acento-forte);
+    text-shadow: 0 0 14px rgb(240 207 134 / 0.45);
+  }
+}
+
+html.abertura.e-fim [data-obra="chamada"] {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+html.abertura.e-fim [data-obra="credito"],
+html.abertura.e-fim [data-obra="resto"],
+html.abertura.e-fim [data-pouso="juliano"] {
+  opacity: 1;
+  transition-delay: 0.5s;
+}
+
+/* -------------------------------------------------- os casos na vaga */
+
+/* Cada vaga aparece tracejada antes de o card chegar. */
+html.abertura .vaga::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px dashed var(--regua-forte);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+/* O card de verdade só aparece quando o voador pousa na vaga (data-chegou,
+   posto por Abertura.tsx): quem chega é o mesmo card que nasceu da marca. */
+html.abertura .cartao {
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+html.abertura .vaga[data-chegou] .cartao {
+  opacity: 1;
+}
+
+/* A vaga dos dados acende enquanto o Triador arrasta o card até ela. */
+html.abertura.e-obra .vaga[data-vaga="2"]::before {
+  border-color: var(--acento-escuro);
+  background: rgb(201 164 92 / 0.06);
+}
+
+html.abertura.e-revisao .vaga[data-vaga="2"]::before {
+  background: transparent;
+}
+
+html.abertura.e-fim .cartao {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------- o caos */
+
+/* As dores chegam rápidas demais: cada uma treme e escorrega deixando rastro.
+   Quando o tempo para (e-para), tudo congela onde estava e perde a cor. */
+.frag {
+  --cx: var(--x);
+  --cy: var(--y);
+  position: absolute;
+  left: calc(var(--cx) * 1%);
+  top: calc(var(--cy) * 1%);
+  max-width: min(32vw, 440px);
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease,
+    translate 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.frag-cartao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--regua-forte);
+  border-radius: 4px;
+  background: var(--fundo-elevado);
+  color: var(--tinta-suave);
+  font-size: 13px;
+  rotate: calc(var(--r) * 1deg);
+  opacity: 0;
+  animation:
+    frag-entra 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    frag-corre 0.9s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 60ms), calc(var(--i) * 60ms + 0.45s);
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease;
+}
+
+/* O rastro: o mesmo cartão, borrado, um passo atrás. */
+.frag-cartao::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  right: 30%;
+  translate: -38px 0;
+  border-radius: 4px;
+  background: linear-gradient(to right, transparent, rgb(58 70 81 / 0.55));
+  filter: blur(4px);
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.frag-icone {
+  flex: none;
+  width: 14px;
+  height: 18px;
+  border: 1px solid var(--tinta-fraca);
+  border-radius: 2px;
+}
+
+.frag-texto {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@keyframes frag-entra {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes frag-corre {
+  50% {
+    rotate: calc(var(--r) * 1deg + 1.6deg);
+    translate: 10px -3px;
+  }
+}
+
+/* --- o tempo para */
+
+html.abertura.e-para .frag-cartao,
+html.abertura.e-para .poeira {
+  animation-play-state: paused;
+}
+
+html.abertura.e-para .frag-cartao::before {
+  opacity: 0;
+}
+
+html.abertura.e-para .frag {
+  filter: grayscale(0.9) brightness(0.72);
+}
+
+/* --- as marcas: uma por vez, e só elas recuperam a cor */
+
+html.abertura.e-marca .frag:not([data-marca]) {
+  opacity: 0.45;
+}
+
+html.abertura.e-marca .frag[data-marca] {
+  filter: none;
+  transition-delay: calc(var(--m) * 0.8s + 0.35s);
+}
+
+html.abertura.e-marca .frag[data-marca] .frag-cartao {
+  color: #f0a08f;
+  transition-delay: calc(var(--m) * 0.8s + 0.35s);
+}
+
+.frag-mira {
+  position: absolute;
+  inset: -9px;
+  border: 1.5px solid var(--acento-forte);
+  border-radius: 7px;
+  background: rgb(201 164 92 / 0.06);
+  box-shadow: 0 0 18px rgb(240 207 134 / 0.35);
+  opacity: 0;
+  scale: 1.25;
+  pointer-events: none;
+}
+
+/* As cantoneiras da mira, nos quatro cantos. */
+.frag-mira::before,
+.frag-mira::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 2.5px solid var(--acento-forte);
+  clip-path: polygon(0 0, 22px 0, 22px 3px, 3px 3px, 3px 22px, 0 22px, 0 calc(100% - 22px), 3px calc(100% - 22px), 3px calc(100% - 3px), 22px calc(100% - 3px), 22px 100%, 0 100%);
+}
+
+.frag-mira::after {
+  scale: -1 1;
+}
+
+.frag-mira-numero {
+  position: absolute;
+  left: -8px;
+  top: -30px;
+  color: var(--acento-forte);
+  font-size: 12px;
+}
+
+html.abertura.e-marca .frag-mira {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 0.12s ease,
+    scale 0.28s cubic-bezier(0.2, 1.5, 0.4, 1);
+  transition-delay: calc(var(--m) * 0.8s + 0.35s);
+}
+
+.rotulo-gargalo {
+  position: absolute;
+  right: 8px;
+  top: calc(100% + 26px);
+  color: var(--gargalo);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+html.abertura.e-marca .rotulo-gargalo {
+  opacity: 1;
+  transition-delay: calc(var(--m) * 0.8s + 0.35s + 0.15s);
+}
+
+/* --- o estalo: o resto é varrido; as marcadas viram os cards */
+
+html.abertura.e-estalo .frag:not([data-marca]) {
+  opacity: 0;
+  translate: calc((var(--cx) + 9 - 50) * 1.3vw) calc((var(--cy) + 3 - 45) * 1.3vh);
+  transition-duration: 0.9s, 0.5s, 1s;
+  transition-delay: 0.3s;
+}
+
+html.abertura.e-estalo .frag[data-marca] {
+  opacity: 0;
+  transition: opacity 0.2s ease 0.4s;
+}
+
+/* O olhar: uma linha dos olhos dele até cada marca, na vez dela. */
+.olhares {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.olhares line {
+  stroke: #e9c47a;
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+  opacity: 0;
+}
+
+html.abertura.e-marca .olhares line {
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+  transition-delay: calc(var(--m) * 0.8s + 0.35s);
+}
+
+html.abertura.e-estalo .olhares line {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+/* Poeira: anda junto com o caos e fica suspensa quando o tempo para. */
+.poeira {
+  position: absolute;
+  left: calc(28% + var(--k) * 4.6%);
+  top: calc(58% + mod(var(--k) * 7, 13) * 1.2%);
+  width: 3px;
+  height: 3px;
+  background: var(--tinta-suave);
+  opacity: 0.45;
+  animation: poeira 1.3s linear infinite;
+  animation-delay: calc(var(--k) * -0.13s);
+}
+
+@keyframes poeira {
+  to {
+    translate: 46px -18px;
+  }
+}
+
+html.abertura.e-estalo .poeira {
+  opacity: 0;
+  transition: opacity 0.3s ease 0.3s;
+}
+
+.pendencias {
+  position: absolute;
+  right: 4vw;
+  bottom: 6vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  color: var(--gargalo);
+  transition:
+    opacity 0.5s ease,
+    color 0.4s ease;
+}
+
+.pendencias-numero {
+  font-size: clamp(28px, 3vw, 44px);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 18px rgb(196 85 63 / 0.55);
+  transition: text-shadow 0.4s ease;
+}
+
+.pendencias-estado {
+  font-size: 12px;
+}
+
+.pendencias-estado .congelado,
+html.abertura.e-para .pendencias-estado .subindo {
+  display: none;
+}
+
+html.abertura.e-para .pendencias-estado .congelado {
+  display: inline;
+}
+
+.pendencias-rotulo {
+  color: var(--tinta-fraca);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+html.abertura.e-para .pendencias {
+  color: var(--tinta-fraca);
+}
+
+html.abertura.e-para .pendencias-numero {
+  text-shadow: none;
+}
+
+/* No estalo, sobram 3: as perguntas que acabaram de ganhar resposta. */
+html.abertura.e-estalo .pendencias {
+  color: var(--acento);
+}
+
+html.abertura.e-estalo .pendencias-estado {
+  visibility: hidden;
+}
+
+html.abertura.e-time .pendencias {
+  opacity: 0;
+}
+
+/* --- as respostas: o card de cada caso, nascendo de uma marca */
+
+.cartao-voo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  padding: 22px 24px;
+  border: 1px solid var(--acento);
+  background: var(--fundo-elevado);
+  box-shadow:
+    0 0 24px rgb(240 207 134 / 0.25),
+    0 14px 30px rgb(0 0 0 / 0.55);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  opacity: 0;
+  rotate: var(--giro, 0deg);
+  scale: var(--escala, 1);
+  transform-origin: top right;
+  transition:
+    scale var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    left var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    top var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    width var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    height var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    rotate var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    opacity 0.25s ease;
+}
+
+.cartao-voo-dominio {
+  color: var(--acento);
+  font-family: var(--font-gravura), serif;
+  font-size: 15px;
+}
+
+.cartao-voo-titulo {
+  margin-top: 12px;
+  color: var(--tinta);
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+html.abertura.e-estalo .cartao-voo {
+  opacity: 1;
+  transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0.4s;
+}
+
+.cartao-voo[data-arrastado] {
+  border-style: dashed;
+}
+
+.cartao-voo[data-pousou] {
+  opacity: 0 !important;
+  transition-duration: 0s !important;
+}
+
+html.abertura.e-fim .cartao-voo {
+  opacity: 0;
+}
+
+/* -------------------------------------------------------- ele */
+
+.cena-juliano {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  height: clamp(100px, 15vh, 140px);
+  aspect-ratio: 99 / 240;
+  translate: -54.6% 0;
+  background: url(/personagem/juliano.png) 0 0 / 500% 100% no-repeat;
+  transition: opacity 0.4s ease;
+}
+
+/* sombra no chão */
+.cena-juliano::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.5);
+  z-index: -1;
+}
+
+/* Os cinco quadros da folha: parado, erguendo, pronto, estalo, descendo. */
+html.abertura.e-para .cena-juliano {
+  background-position: 25% 0;
+}
+
+html.abertura.e-marca .cena-juliano {
+  background-position: 50% 0;
+}
+
+html.abertura.e-estalo .cena-juliano {
+  animation: estalar 1s step-end forwards;
+}
+
+@keyframes estalar {
+  0% {
+    background-position: 50% 0;
+  }
+  20% {
+    background-position: 75% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+/* Na obra ele se afasta para o canto e só observa o time (quadros 4 e 5). */
+html.abertura.e-obra .cena-juliano {
+  left: 10.4%;
+  bottom: 7%;
+  height: clamp(72px, 10vh, 96px);
+  transition:
+    left 1.2s cubic-bezier(0.45, 0, 0.2, 1),
+    bottom 1.2s cubic-bezier(0.45, 0, 0.2, 1),
+    height 1.2s cubic-bezier(0.45, 0, 0.2, 1),
+    opacity 0.4s ease;
+}
+
+html.abertura.e-fim .cena-juliano {
+  opacity: 0;
+}
+
+/* A onda nasce na faísca dos dedos (24,8% e 12,7% do quadro). Cresce pelo
+   tamanho, não por `scale`: com escala, a borda de 2px engrossaria junto e
+   viraria uma faixa cinza cobrindo a tela. */
+.onda {
+  --alcance: calc((6 + var(--n) * var(--n) * 9) * 24px);
+  position: absolute;
+  left: 24.8%;
+  top: 12.7%;
+  width: 0;
+  height: 0;
+  translate: -50% -50%;
+  border: 1.5px solid var(--acento-forte);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+html.abertura.e-estalo .onda {
+  animation: onda 1.5s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  animation-delay: calc(0.32s + var(--n) * 0.12s);
+}
+
+@keyframes onda {
+  0% {
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+    box-shadow: 0 0 16px var(--acento-forte);
+  }
+  100% {
+    opacity: 0;
+    width: var(--alcance);
+    height: var(--alcance);
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+/* A onda que para o tempo: uma só, fina, saindo da mão erguida. */
+.onda-tempo {
+  position: absolute;
+  left: 24.8%;
+  top: 12.7%;
+  width: 0;
+  height: 0;
+  translate: -50% -50%;
+  border: 1px solid var(--acento);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+html.abertura.e-para .onda-tempo {
+  animation: onda-tempo 1.1s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+}
+
+@keyframes onda-tempo {
+  0% {
+    opacity: 0.9;
+    width: 10px;
+    height: 10px;
+  }
+  100% {
+    opacity: 0;
+    width: 260vmax;
+    height: 260vmax;
+  }
+}
+
+/* ------------------------------------------------------- o time */
+
+.cena-familiar {
+  --s: 1.4;
+  position: absolute;
+  left: calc(var(--px) * 1%);
+  top: calc(var(--py) * 1%);
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  scale: var(--s);
+  transition:
+    left var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    top var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1),
+    scale var(--dur, 1.1s) cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+.cena-familiar .familiar {
+  display: block;
+  opacity: 0;
+  scale: 0.3;
+  filter: drop-shadow(0 0 5px rgb(240 207 134 / 0.45));
+  transition:
+    opacity 0.35s ease,
+    scale 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.faisca {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 50%;
+  background: #f0cf86;
+  box-shadow: 0 0 14px 4px rgb(240 207 134 / 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+html.abertura.e-estalo .faisca {
+  opacity: 1;
+  transition-delay: calc(0.6s + var(--n) * 0.06s);
+}
+
+html.abertura.e-time .faisca {
+  opacity: 0;
+  transition-delay: calc(var(--n) * 0.12s);
+}
+
+html.abertura.e-time .cena-familiar .familiar {
+  opacity: 1;
+  scale: 1;
+  transition-delay: calc(var(--n) * 0.12s);
+}
+
+.etiqueta {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  translate: -50% 0;
+  scale: calc(1 / var(--s));
+  transform-origin: top;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--acento);
+  color: var(--fundo);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    scale 1.1s cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+html.abertura.e-time .etiqueta {
+  opacity: 1;
+  transition-delay: calc(0.3s + var(--n) * 0.12s), 0s;
+}
+
+html.abertura.e-fim .etiqueta {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+/* ------------------------------------------------ a obra sobre o hero */
+
+.moldura {
+  position: absolute;
+  border: 1px dashed var(--acento);
+  opacity: 0;
+  clip-path: inset(0 100% 100% 0);
+  transition:
+    opacity 0.4s ease,
+    clip-path 0.9s cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+html.abertura.e-obra .moldura {
+  opacity: 1;
+  clip-path: inset(-12px -12px -40px -12px);
+}
+
+html.abertura.e-fim .moldura {
+  opacity: 0;
+}
+
+/* A caixa do nome: o Arquiteto a puxa pelo canto, do tamanho de partida até
+   o real. Mesma duração e curva do voo dele (PUXADA, em Abertura.tsx). */
+.caixa-nome {
+  position: absolute;
+  border: 1.5px solid var(--acento);
+  opacity: 0;
+  transition:
+    width 1.3s cubic-bezier(0.45, 0, 0.55, 1),
+    height 1.3s cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 0.3s ease;
+}
+
+html.abertura.e-obra .caixa-nome {
+  opacity: 1;
+}
+
+html.abertura.e-fim .caixa-nome {
+  opacity: 0;
+}
+
+.alca {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--acento);
+  background: var(--fundo);
+}
+
+.alca-no {
+  left: -4px;
+  top: -4px;
+}
+
+.alca-ne {
+  right: -4px;
+  top: -4px;
+}
+
+.alca-so {
+  left: -4px;
+  bottom: -4px;
+}
+
+.alca-se {
+  right: -4px;
+  bottom: -4px;
+}
+
+.medida {
+  position: absolute;
+  right: 22px;
+  bottom: -30px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--acento);
+  color: var(--fundo);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.comentario {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(250px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border: 1px solid var(--acento);
+  border-radius: 8px;
+  background: var(--fundo-elevado);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  color: var(--tinta);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 0.35s ease,
+    translate 0.35s ease;
+}
+
+.comentario .autor {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--tinta-suave);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.comentario .resposta {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--regua);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.resolvido {
+  color: var(--acento);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+html.abertura.e-revisao .comentario[data-c="guardiao"] {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.9s;
+}
+
+/* No celular não há espaço para os dois juntos. */
+@media (max-width: 639px) {
+  html.abertura.e-prova .comentario[data-c="guardiao"] {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+}
+
+html.abertura.e-prova .comentario[data-c="vigia"] {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: 0.8s;
+}
+
+html.abertura.e-prova .comentario[data-c="vigia"] .resposta {
+  opacity: 1;
+  transition-delay: 1.7s;
+}
+
+html.abertura.e-fim .comentario[data-c] {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+/* O alfinete do comentário do Vigia, cravado no nome. */
+.pino {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px;
+  border: 2px solid var(--fundo);
+  border-radius: 50%;
+  background: var(--acento);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+html.abertura.e-prova .pino {
+  opacity: 1;
+  transition-delay: 1.4s;
+}
+
+html.abertura.e-fim .pino {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+.pular {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  padding: 8px 12px;
+  border: 1px solid var(--regua-forte);
+  border-radius: 4px;
+  background: var(--fundo);
+  color: var(--tinta-fraca);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.pular:hover {
+  color: var(--acento);
+}
+
+/* ------------------------------------------------------- celular */
+
+@media (max-width: 639px) {
+  .frag {
+    --cx: var(--xm);
+    --cy: var(--ym);
+    max-width: 66vw;
+  }
+
+  .frag[data-marca] .frag-texto {
+    white-space: normal;
+  }
+
+  .frag[data-movel="nao"] {
+    display: none;
+  }
+
+  .poeira {
+    left: calc(8% + var(--k) * 8%);
+  }
+
+  .cartao-voo {
+    padding: 16px 18px;
+  }
+
+  .cartao-voo-titulo {
+    margin-top: 8px;
+    font-size: 15px;
+  }
+
+  .cena-familiar {
+    left: calc(var(--pxm) * 1%);
+    top: calc(var(--pym) * 1%);
+  }
+
+  .pular {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .pendencias {
+    bottom: auto;
+    top: 64%;
+  }
+}
+
+/* --------------------------------------------- os que moram no hero */
+
+/* Respirando: o familiar pousado sobe e desce devagar, cada um no seu tempo. */
+.pouso-familiar {
+  animation: respirar 4.2s ease-in-out infinite;
+  animation-delay: var(--respiro, 0s);
+  filter: drop-shadow(0 0 5px rgb(240 207 134 / 0.35));
+}
+
+@keyframes respirar {
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+/* O nome de quem mora ali aparece logo acima, ao passar o mouse. */
+.pouso-familiar,
+.juliano-pouso {
+  pointer-events: auto;
+}
+
+.pouso-nome {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  translate: -50% 4px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--acento);
+  color: var(--fundo);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    translate 0.2s ease;
+}
+
+.pouso-familiar:hover .pouso-nome,
+.juliano-pouso:hover .pouso-nome {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.juliano-pouso {
+  background: url(/personagem/juliano.png) 0 0 / 500% 100% no-repeat;
+  aspect-ratio: 99 / 240;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.abertura {
+    overflow: auto;
+  }
+
+  html.abertura .cena {
+    display: none;
+  }
+
+  html.abertura .cartao {
+    opacity: 1;
+  }
+
+  html.abertura [data-obra],
+  html.abertura [data-pouso],
+  html.abertura .letra {
+    opacity: 1;
+    animation: none;
+  }
+
+  .pouso-familiar {
+    animation: none;
+  }
+
+  .ver-de-novo {
+    display: none;
+  }
+}

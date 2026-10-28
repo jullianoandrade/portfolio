@@ -1,33 +1,18 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AlternadorIdioma } from "@/components/AlternadorIdioma";
-import { Revelar } from "@/components/Revelar";
+import { Abertura } from "@/components/abertura/Abertura";
+import { Familiar } from "@/components/abertura/Familiar";
+import { VerDeNovo } from "@/components/abertura/VerDeNovo";
+import "@/components/cenas/cenas.css";
+import { Contato } from "@/components/cenas/Contato";
+import { Deslize } from "@/components/cenas/Deslize";
+import { hashDoSistema } from "@/components/cenas/endereco";
+import { Pranchas } from "@/components/cenas/Pranchas";
+import { Time } from "@/components/cenas/Time";
+import { TrilhoVigia } from "@/components/cenas/TrilhoVigia";
 import { IDIOMAS, ehIdioma, obterConteudo, outroIdioma } from "@/conteudo";
-import { casoDestaque, formaDoPapel } from "@/conteudo/tipos";
-
-function Secao({
-  numero,
-  titulo,
-  id,
-  children,
-}: {
-  numero: string;
-  titulo: string;
-  id?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="scroll-mt-24 border-t border-regua py-16 sm:py-24">
-      <Revelar>
-        <p className="rotulo mb-3">
-          {numero} — {titulo}
-        </p>
-      </Revelar>
-      {children}
-    </section>
-  );
-}
+import { FAMILIARES, type NomeFamiliar } from "@/conteudo/tipos";
 
 /**
  * Só existem os parâmetros gerados em build. Sem isto, um slug inexistente
@@ -36,6 +21,36 @@ function Secao({
  * e acaba indexado.
  */
 export const dynamicParams = false;
+
+/**
+ * Decide se a abertura toca, antes da primeira pintura — se esperasse o React,
+ * o hero apareceria pronto e depois sumiria para ser montado. Não toca com
+ * movimento reduzido nem na segunda visita da sessão. Se o JavaScript da
+ * página nunca chegar, a segurança devolve o hero em 20 s.
+ */
+const DECIDE_ABERTURA = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!sessionStorage.getItem("abertura-vista")){var h=document.documentElement;h.classList.add("abertura");window.__aberturaSeguranca=setTimeout(function(){h.classList.remove("abertura")},20000)}}catch(e){}`;
+
+/**
+ * Os três casos da primeira fileira e o familiar que mora em cada um — quem
+ * traz o card na abertura. A ordem casa com as três marcas da abertura
+ * (`ui.abertura.marcas`): cada dor marcada vira o card da vaga dela. O Guardião fica no de contratos, onde conferir é
+ * tudo; o Triador no de dados, que ele arrasta para a vaga.
+ */
+const PRIMEIRA_FILEIRA: [string, NomeFamiliar][] = [
+  ["agente-conversacional", "mensageiro"],
+  ["contratos-bancarios", "guardiao"],
+  ["ingestao-em-escala", "triador"],
+];
+
+/**
+ * Onde cada familiar mora no hero, em telas largas: x em % da largura, y em
+ * px do topo do hero — as posições do quadro 6 do storyboard.
+ */
+const POUSOS_HERO: [NomeFamiliar, string, number][] = [
+  ["arquiteto", "74.8%", 156],
+  ["escriba", "82.5%", 312],
+  ["vigia", "100.8%", 62],
+];
 
 export async function generateStaticParams() {
   return IDIOMAS.map((idioma) => ({ idioma }));
@@ -46,233 +61,235 @@ export default async function Home({ params }: { params: Promise<{ idioma: strin
   if (!ehIdioma(idioma)) notFound();
 
   const conteudo = obterConteudo(idioma);
-  const { perfil, interface: ui, capacidades, casos } = conteudo;
-  const destaque = casoDestaque(conteudo);
-  const demais = casos.filter((c) => c.slug !== destaque.slug);
+  const { perfil, interface: ui, casos, cenas } = conteudo;
+  const nomes = ui.abertura.familiares;
   const outro = outroIdioma(idioma);
+  const primeiroNome = perfil.nome.split(" ")[0];
+  // A linha que o Guardião põe no lugar da frase de efeito: a amplitude do
+  // trabalho, contada das pranchas — cresce sozinha quando entra um sistema novo.
+  const moradores = new Map(PRIMEIRA_FILEIRA);
+  const ordenados = [
+    ...PRIMEIRA_FILEIRA.map(([slug]) => casos.find((c) => c.slug === slug)).filter((c) => c !== undefined),
+    ...casos.filter((c) => !moradores.has(c.slug)),
+  ];
+  // Na ordem dos cards, para a frase e a grade contarem a mesma coisa.
+  // Conta as pranchas, não só os casos: o que não tem página (o quiz de leads)
+  // também é sistema no ar, e entra com o próprio domínio no fim da lista.
+  // Em minúscula no meio da frase, mas sigla fica como é: "R&D" não vira "r&d".
+  const minuscula = (d: string) =>
+    d.replace(/(^|\s)(\p{Lu})(?=\p{Ll})/gu, (_, antes: string, letra: string) => antes + letra.toLocaleLowerCase(idioma));
+  const extras = cenas.pranchas.itens.flatMap((p) => (p.caso ? [] : p.dominio ? [p.dominio] : []));
+  const dominios = [
+    ...new Set([...ordenados.map((c) => c.dominio), ...extras].map(minuscula)),
+  ];
+  const amplitude = ui.heroAmplitude(cenas.pranchas.itens.length, dominios);
+  // A regra de cada familiar, para o balão de quem acompanha as pranchas.
+  const regras = Object.fromEntries(FAMILIARES.map((n) => [n, cenas.time.fichas[n].regra])) as Record<NomeFamiliar, string>;
+  const trilho = [
+    { id: "inicio", nome: cenas.trilho.inicio },
+    { id: "construi", nome: cenas.trilho.casos },
+    { id: "time", nome: cenas.trilho.time },
+    { id: "contato", nome: cenas.trilho.contato },
+  ];
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-b border-regua bg-fundo/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-4">
-          <Link href={`/${idioma}`} className="text-sm font-semibold tracking-tight">
-            {perfil.nome}
-          </Link>
-          <nav className="flex items-center gap-5">
-            <a href="#sobre" className="rotulo hidden transition-colors hover:text-acento sm:block">
-              {ui.navegacao.sobre}
+      <script dangerouslySetInnerHTML={{ __html: DECIDE_ABERTURA }} />
+      <header data-obra="cabecalho" className="sticky top-0 z-20 bg-fundo/85 backdrop-blur-md">
+        <div className="mx-auto max-w-[75rem] px-6">
+          <div className="flex h-(--topo) items-center justify-between gap-4 border-b border-regua">
+            {/* Já está na home: o nome volta ao início, deslizando como o menu. */}
+            <a href="#inicio" className="rotulo !text-tinta">
+              {perfil.nome}
             </a>
-            <a href="#casos" className="rotulo hidden transition-colors hover:text-acento sm:block">
-              {ui.navegacao.casos}
-            </a>
-            <a href="#contato" className="rotulo hidden transition-colors hover:text-acento sm:block">
-              {ui.navegacao.contato}
-            </a>
-            <AlternadorIdioma atual={idioma} destino={outro} rotulo={ui.trocarIdioma} />
-          </nav>
+            <nav className="flex items-center gap-6 lg:gap-8">
+              {(
+                [
+                  ["construi", ui.navegacao.casos],
+                  ["time", ui.navegacao.time],
+                  ["contato", ui.navegacao.contato],
+                ] as const
+              ).map(([id, nome]) => (
+                <a key={id} href={`#${id}`} className="rotulo hidden transition-colors hover:text-acento md:block">
+                  {nome}
+                </a>
+              ))}
+              <AlternadorIdioma atual={idioma} destino={outro} rotulo={ui.trocarIdioma} />
+            </nav>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6">
+      <main className="mx-auto w-full max-w-[75rem] flex-1 px-6">
+        <div id="inicio" data-cena>
         {/* ---------------------------------------------------------- hero */}
-        <section className="py-20 sm:py-32">
-          <Revelar>
-            <p className="rotulo mb-5">
-              {perfil.titulo} · {perfil.localizacao}
-            </p>
-          </Revelar>
-          <Revelar atraso={80}>
-            <h1 className="max-w-[18ch] text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
-              {ui.heroChamada}
-            </h1>
-          </Revelar>
-          <Revelar atraso={160}>
-            <p className="mt-7 max-w-[62ch] text-lg leading-relaxed text-tinta-suave">
-              {ui.heroSubtitulo}
-            </p>
-          </Revelar>
-          <Revelar atraso={240}>
-            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <Link
-                href={`/${idioma}/casos/${destaque.slug}`}
-                className="rounded-[--borda-raio] bg-acento px-5 py-3 text-sm font-medium text-fundo transition-opacity hover:opacity-90"
-              >
-                {ui.verCaso}
-              </Link>
-              <span className="inline-flex items-center gap-2 text-sm text-tinta-fraca">
-                <span className="size-1.5 rounded-full bg-acento" aria-hidden />
-                {perfil.disponibilidade}
+        {/* Montado pelos familiares na abertura; sem ela, já está pronto. Os
+            `data-obra` dizem em que momento cada peça entra, os `data-alvo`
+            onde cada familiar trabalha e os `data-pouso` onde ele mora. */}
+        <section data-alvo="hero" className="relative pt-16 sm:pt-24">
+          <p data-obra="rotulo" className="rotulo">
+            {perfil.localizacao} · {perfil.titulo}
+          </p>
+          <div data-alvo="bloco-nome" className="mt-4 w-fit max-w-full">
+            <h1 className="font-gravura text-[3.25rem] leading-none text-acento sm:text-7xl lg:text-[6.5rem]">
+              <span className="sr-only">{perfil.nome}</span>
+              <span data-alvo="nome" aria-hidden>
+                {Array.from(perfil.nome).map((letra, i) => (
+                  <span key={i} className="letra" style={{ "--i": i } as React.CSSProperties}>
+                    {letra}
+                  </span>
+                ))}
               </span>
+            </h1>
+            {/* A frase de efeito ocupa, durante a abertura, o lugar da chamada:
+                nada abaixo dela se mexe quando uma sai e a outra entra. */}
+            <div className="relative mt-7">
+              <p
+                data-obra="chamada"
+                className="max-w-[620px] text-2xl leading-snug sm:text-[1.875rem] sm:leading-[1.4]"
+              >
+                {ui.heroChamada}
+              </p>
+              <p className="frase-efeito absolute inset-x-0 top-0 text-xl sm:text-2xl" aria-hidden>
+                <span data-alvo="frase">
+                  <span className="frase-texto">{ui.abertura.fraseDeEfeito}</span>
+                  <span className="carimbo">{ui.abertura.carimbo}</span>
+                </span>
+              </p>
             </div>
-          </Revelar>
+            <p data-obra="prova" data-alvo="prova" className="mt-6 text-lg text-tinta-suave">
+              {amplitude}
+            </p>
+          </div>
+
+          {/* Quem mora no hero. Na tela larga, nas posições do storyboard; na
+              estreita, em fileira abaixo do texto. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 hidden xl:block">
+            {POUSOS_HERO.map(([nome, x, y], n) => (
+              <span
+                key={nome}
+                data-pouso={nome}
+                className="pouso-familiar absolute size-11"
+                style={
+                  { left: x, top: y, margin: "-22px 0 0 -22px", "--respiro": `${-n * 1.4}s` } as React.CSSProperties
+                }
+              >
+                <Familiar nome={nome} className="size-11" />
+                <span className="pouso-nome">{ui.abertura.familiares[nome]}</span>
+              </span>
+            ))}
+            <span
+              data-pouso="juliano"
+              className="juliano-pouso absolute h-24"
+              style={{ left: "91.5%", top: 288, marginLeft: -20 }}
+            >
+              <span className="pouso-nome">{primeiroNome}</span>
+            </span>
+          </div>
+          <div aria-hidden className="mt-10 flex items-end gap-5 xl:hidden">
+            {POUSOS_HERO.map(([nome], n) => (
+              <span
+                key={nome}
+                data-pouso={nome}
+                className="pouso-familiar relative block size-10"
+                style={{ "--respiro": `${-n * 1.4}s` } as React.CSSProperties}
+              >
+                <Familiar nome={nome} className="size-10" />
+                <span className="pouso-nome">{ui.abertura.familiares[nome]}</span>
+              </span>
+            ))}
+            <span data-pouso="juliano" className="juliano-pouso relative block h-24">
+              <span className="pouso-nome">{primeiroNome}</span>
+            </span>
+          </div>
         </section>
 
-        {/* --------------------------------------------------------- sobre */}
-        <Secao numero="01" titulo={ui.navegacao.sobre} id="sobre">
-          <div className="max-w-[68ch] space-y-5">
-            {perfil.arco.map((paragrafo, i) => (
-              <Revelar key={i} atraso={i * 70}>
-                <p
-                  className={
-                    i === 0
-                      ? "text-xl leading-relaxed sm:text-2xl"
-                      : "text-base leading-relaxed text-tinta-suave"
-                  }
-                >
-                  {paragrafo}
-                </p>
-              </Revelar>
-            ))}
-          </div>
-        </Secao>
-
-        {/* --------------------------------------------------- capacidades */}
-        <Secao numero="02" titulo={ui.navegacao.capacidades}>
-          <div className="grid gap-px overflow-hidden rounded-[--borda-raio] border border-regua bg-regua sm:grid-cols-2">
-            {capacidades.map((cap, i) => (
-              <Revelar key={cap.id} atraso={i * 60}>
-                <div className="flex h-full flex-col bg-fundo p-6 sm:p-7">
-                  <h3 className="text-base font-semibold tracking-tight">{cap.titulo}</h3>
-                  <p className="mt-2.5 flex-1 text-sm leading-relaxed text-tinta-suave">
-                    {cap.descricao}
-                  </p>
-                  {/* Cada capacidade aponta os casos que a demonstram: é o que
-                      faz a organização por capacidade valer alguma coisa, em
-                      vez de ser só um título bonito acima de uma descrição. */}
-                  <ul className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
-                    {cap.casos.map((slug) => {
-                      const caso = casos.find((c) => c.slug === slug);
-                      if (!caso) return null;
-                      return (
-                        <li key={slug}>
-                          <Link
-                            href={`/${idioma}/casos/${slug}`}
-                            className="rotulo underline decoration-regua-forte underline-offset-4 transition-colors hover:text-acento"
-                          >
-                            {caso.dominio}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </Revelar>
-            ))}
-          </div>
-        </Secao>
-
         {/* --------------------------------------------------------- casos */}
-        <Secao numero="03" titulo={ui.navegacao.casos} id="casos">
-          <Revelar>
-            <Link
-              href={`/${idioma}/casos/${destaque.slug}`}
-              className="group block rounded-[--borda-raio] border border-regua-forte p-7 transition-colors hover:border-acento sm:p-10"
-            >
-              <p className="rotulo">
-                {destaque.dominio} · {destaque.periodo}
-              </p>
-              <h3 className="mt-4 max-w-[24ch] text-2xl font-semibold leading-tight tracking-tight transition-colors group-hover:text-acento sm:text-3xl">
-                {destaque.titulo}
-              </h3>
-              <p className="mt-4 max-w-[64ch] leading-relaxed text-tinta-suave">
-                {destaque.resumo}
-              </p>
-              <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
-                {destaque.metricas.map((m) => (
-                  <div key={m.rotulo}>
-                    <dt className="text-2xl font-semibold tabular-nums text-acento">{m.valor}</dt>
-                    <dd className="mt-0.5 text-xs text-tinta-fraca">
-                      {m.rotulo}
-                      <span className="block text-tinta-fraca/70">{m.periodo}</span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </Link>
-          </Revelar>
-
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {demais.map((caso, i) => (
-              <Revelar key={caso.slug} atraso={i * 70}>
-                <Link
-                  href={`/${idioma}/casos/${caso.slug}`}
-                  className="group flex h-full flex-col rounded-[--borda-raio] border border-regua p-6 transition-colors hover:border-acento"
-                >
-                  <p className="rotulo">
-                    {caso.dominio} · {caso.periodo}
-                  </p>
-                  <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-acento">
-                    {caso.titulo}
-                  </h3>
-                  <p className="mt-2.5 flex-1 text-sm leading-relaxed text-tinta-suave">
-                    {caso.resumo}
-                  </p>
-                  <p className="rotulo mt-5">{formaDoPapel(caso.papel, ui)}</p>
-                </Link>
-              </Revelar>
-            ))}
+        <section id="casos" className="scroll-mt-24 pt-16 pb-16 sm:pb-24">
+          <div data-obra="rotulo-casos">
+            <p className="rotulo">{ui.navegacao.casos}</p>
+            <div className="mt-3 border-t border-regua" />
           </div>
-        </Secao>
-
-        {/* ---------------------------------------------------- trajetória */}
-        <Secao numero="04" titulo={perfil.titulo}>
-          <ol className="max-w-[68ch] space-y-8">
-            {perfil.trajetoria.map((etapa, i) => (
-              <Revelar key={i} atraso={i * 70}>
-                <li className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:gap-6">
-                  <p className="rotulo pt-1">{etapa.periodo}</p>
-                  <div>
-                    <h3 className="font-semibold tracking-tight">
-                      {etapa.cargo}
-                      <span className="font-normal text-tinta-fraca"> · {etapa.organizacao}</span>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Só a primeira fileira: os três que a abertura traz. Os outros
+                estão na bancada, a uma rolagem daqui. */}
+            {ordenados.slice(0, PRIMEIRA_FILEIRA.length).map((caso, i) => {
+              const morador = moradores.get(caso.slug);
+              return (
+                <div key={caso.slug} className="vaga relative" data-vaga={i}>
+                  <a
+                    href={hashDoSistema(caso.slug)}
+                    className="cartao group flex h-full min-h-[140px] flex-col border border-regua bg-fundo-elevado p-6 transition-colors hover:border-acento"
+                  >
+                    <p className="font-gravura text-[15px] text-acento">{caso.dominio}</p>
+                    <h3 className="mt-3 text-lg leading-snug transition-colors group-hover:text-acento">
+                      {caso.titulo}
                     </h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-tinta-suave">
-                      {etapa.descricao}
-                    </p>
-                  </div>
-                </li>
-              </Revelar>
-            ))}
-          </ol>
-        </Secao>
+                  </a>
+                  {morador && (
+                    <span
+                      data-pouso={morador}
+                      aria-hidden
+                      className="pouso-familiar absolute size-11"
+                      style={{ right: 8, top: -34, "--respiro": `${-i * 1.1}s` } as React.CSSProperties}
+                    >
+                      <Familiar nome={morador} className="size-11" />
+                      <span className="pouso-nome">{ui.abertura.familiares[morador]}</span>
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-        {/* ------------------------------------------------------- contato */}
-        <Secao numero="05" titulo={ui.navegacao.contato} id="contato">
-          <Revelar>
-            <div className="flex flex-wrap gap-x-8 gap-y-3">
-              <a href={`mailto:${perfil.email}`} className="text-lg underline-offset-4 hover:text-acento hover:underline">
-                {perfil.email}
-              </a>
-              <a
-                href={perfil.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="text-lg underline-offset-4 hover:text-acento hover:underline"
-              >
-                LinkedIn
-              </a>
-              <a
-                href={perfil.github}
-                target="_blank"
-                rel="noreferrer"
-                className="text-lg underline-offset-4 hover:text-acento hover:underline"
-              >
-                GitHub
-              </a>
-            </div>
-          </Revelar>
-        </Secao>
+        </div>
+
+        <div data-obra="resto">
+          <section id="construi" data-cena className="cena-tela border-t border-regua">
+            <Pranchas textos={cenas.pranchas} nomes={nomes} regras={regras} idioma={idioma} />
+          </section>
+
+          <section id="time" data-cena className="cena-tela border-t border-regua">
+            <Time textos={cenas.time} nomes={nomes} />
+          </section>
+
+          <section id="contato" data-cena className="cena-tela border-t border-regua">
+            <Contato
+              textos={cenas.contato}
+              email={perfil.email}
+              linkedin={perfil.linkedin}
+              github={perfil.github}
+              primeiroNome={primeiroNome}
+              nomes={nomes}
+              rodape={
+                <>
+                  <p className="rotulo">
+                    {ui.abertura.credito} · <VerDeNovo rotulo={ui.abertura.verDeNovo} />
+                  </p>
+                  {/* Sem ano: um número que envelhece sozinho só serve para
+                      denunciar abandono, e forçaria render dinâmico. */}
+                  <p className="rotulo mt-3 !text-tinta-fraca">
+                    {perfil.nome} · {perfil.titulo} · {perfil.localizacao}
+                  </p>
+                </>
+              }
+            />
+          </section>
+        </div>
       </main>
 
-      <footer className="border-t border-regua py-8">
-        <div className="mx-auto max-w-5xl px-6">
-          {/* Sem ano: um número que envelhece sozinho só serve para denunciar
-              abandono, e forçaria render dinâmico só para isso. */}
-          <p className="rotulo">
-            {perfil.nome} · {perfil.titulo} · {perfil.localizacao}
-          </p>
-        </div>
-      </footer>
+      {/* Fora do `data-obra`: a abertura mexe em transform ali, e um pai com
+          transform tira o `fixed` do lugar. O trilho se esconde sozinho. */}
+      <TrilhoVigia cenas={trilho} rotulo={ui.navegacao.casos} />
+      <Deslize />
+
+      {/* Os cards que nascem das marcas na abertura: os da primeira fileira. */}
+      <Abertura
+        textos={ui.abertura}
+        idioma={idioma}
+        cards={ordenados.slice(0, PRIMEIRA_FILEIRA.length).map((c) => ({ dominio: c.dominio, titulo: c.titulo }))}
+      />
     </>
   );
 }

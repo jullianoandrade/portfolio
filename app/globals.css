@@ -3,73 +3,38 @@
 /* ============================================================
    Tokens
 
-   Um acento só, âmbar. Precedente no gerador de laudo (#9A6F35) e
-   deliberadamente longe do azul-roxo que marca portfólio de template.
-
-   Tema: segue o sistema por padrão; `data-tema` no <html> sobrepõe, para
-   o alternador funcionar sem recarregar.
+   Ardósia e latão, só escuro. O latão é a cor dos familiares da abertura e
+   o único acento; o vermelho de `--gargalo` só aparece para nomear o
+   problema — na lente, no risco e no carimbo do Guardião.
    ============================================================ */
 
 :root {
-  --fundo: #fbfaf8;
-  --fundo-elevado: #ffffff;
-  --fundo-afundado: #f2efea;
+  color-scheme: dark;
 
-  --tinta: #16130f;
-  --tinta-suave: #4a443c;
-  --tinta-fraca: #7d7568;
+  --fundo: #151a1f;
+  --fundo-elevado: #1c232a;
+  --fundo-afundado: #0f1317;
 
-  --acento: #8a5a1c;
-  --acento-forte: #6d4614;
-  --acento-fraco: #f0e4d2;
+  --tinta: #e8e1d1;
+  --tinta-suave: #a9a596;
+  --tinta-fraca: #8a8f94;
 
-  --regua: #e2dcd2;
-  --regua-forte: #cdc4b6;
+  --acento: #c9a45c;
+  --acento-forte: #e0c07e;
+  --acento-escuro: #8c6f3a;
+  --acento-fraco: #2a2416;
 
-  --sombra: 0 1px 2px rgb(22 19 15 / 0.05), 0 8px 24px rgb(22 19 15 / 0.05);
+  --gargalo: #c4553f;
 
-  --medida: 68ch;
-  --borda-raio: 10px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-tema="claro"]) {
-    --fundo: #0e0d0b;
-    --fundo-elevado: #171512;
-    --fundo-afundado: #080706;
-
-    --tinta: #f3efe8;
-    --tinta-suave: #bdb5a8;
-    --tinta-fraca: #8a8277;
-
-    --acento: #e0a954;
-    --acento-forte: #f0c884;
-    --acento-fraco: #2b2114;
-
-    --regua: #2a2621;
-    --regua-forte: #3d372f;
-
-    --sombra: none;
-  }
-}
-
-:root[data-tema="escuro"] {
-  --fundo: #0e0d0b;
-  --fundo-elevado: #171512;
-  --fundo-afundado: #080706;
-
-  --tinta: #f3efe8;
-  --tinta-suave: #bdb5a8;
-  --tinta-fraca: #8a8277;
-
-  --acento: #e0a954;
-  --acento-forte: #f0c884;
-  --acento-fraco: #2b2114;
-
-  --regua: #2a2621;
-  --regua-forte: #3d372f;
+  --regua: #2b343d;
+  --regua-forte: #3a4651;
 
   --sombra: none;
+
+  --medida: 68ch;
+  /* Altura do cabeçalho fixo: cada cena encaixa logo abaixo dele. */
+  --topo: 4.5rem;
+  --borda-raio: 10px;
 }
 
 @theme inline {
@@ -82,11 +47,13 @@
   --color-acento: var(--acento);
   --color-acento-forte: var(--acento-forte);
   --color-acento-fraco: var(--acento-fraco);
+  --color-gargalo: var(--gargalo);
   --color-regua: var(--regua);
   --color-regua-forte: var(--regua-forte);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-gravura: var(--fonte-gravura);
 }
 
 /* ============================================================
@@ -95,6 +62,10 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--topo);
+  /* A abertura trava o scroll; sem isto a barra some e volta, e o hero
+     pula para o lado no fim da cena. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -108,6 +79,12 @@ body {
 ::selection {
   background: var(--acento-fraco);
   color: var(--acento-forte);
+}
+
+/* O Tailwind 4 tirou a mãozinha dos botões; aqui todo botão clicável a tem,
+   igual aos links. */
+button:not(:disabled) {
+  cursor: pointer;
 }
 
 :focus-visible {
@@ -197,4 +174,43 @@ body {
     transform: none;
     transition: none;
   }
+}
+
+/* ============================================================
+   Cenas
+
+   Cada cena ocupa a tela abaixo do cabeçalho, e a rolagem encaixa de uma em
+   uma — só onde a cena cabe na tela. Em tela baixa ou estreita, uma cena
+   mais alta que a janela ficaria cortada, então ali a rolagem é livre.
+   ============================================================ */
+
+.cena-tela {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 4rem;
+}
+
+@media (min-width: 1024px) and (min-height: 720px) {
+  html:not(.abertura) {
+    scroll-snap-type: y mandatory;
+  }
+
+  [data-cena] {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .cena-tela {
+    min-height: calc(100svh - var(--topo));
+    padding-block: 2.25rem;
+  }
+}
+
+/* Enquanto a página desliza (components/cenas/Deslize.tsx), o encaixe do
+   navegador sai da frente: ele puxaria para a cena mais perto no meio do
+   caminho, que é justamente o pulo seco que o deslize substitui. */
+html.deslizando {
+  scroll-snap-type: none !important;
+  scroll-behavior: auto !important;
 }
