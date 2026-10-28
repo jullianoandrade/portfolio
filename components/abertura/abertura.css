@@ -1284,18 +1284,132 @@ html.abertura.e-fim .pino {
 /* ------------------------------------------------------- celular */
 
 @media (max-width: 639px) {
+  /* O caos no celular é um feed de notificações: uma pílula por linha,
+     chegando de cima, cada uma na sua vez (`--fm` é a linha). */
   .frag {
-    --cx: var(--xm);
-    --cy: var(--ym);
-    max-width: 66vw;
+    left: 12px;
+    right: 12px;
+    top: calc(140px + var(--fm) * 44px);
+    max-width: none;
   }
 
-  .frag[data-marca] .frag-texto {
-    white-space: normal;
-  }
-
-  .frag[data-movel="nao"] {
+  .frag:not([data-feed]) {
     display: none;
+  }
+
+  .frag-cartao {
+    gap: 8px;
+    padding: 8px 11px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    rotate: 0deg;
+    animation:
+      feed-entra 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+      feed-treme 0.5s ease-in-out infinite;
+    animation-delay: calc(var(--fm) * 110ms), calc(var(--fm) * 110ms + 0.32s);
+  }
+
+  .frag-cartao::before {
+    display: none;
+  }
+
+  .frag-icone {
+    width: 10px;
+    height: 12px;
+  }
+
+  @keyframes feed-entra {
+    from {
+      opacity: 0;
+      translate: 0 -28px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @keyframes feed-treme {
+    50% {
+      translate: 3px 0;
+    }
+  }
+
+  .frag-mira {
+    inset: -5px;
+    border-radius: 13px;
+  }
+
+  .frag-mira::before,
+  .frag-mira::after {
+    display: none;
+  }
+
+  .frag-mira-numero {
+    left: -2px;
+    top: -16px;
+    font-size: 10px;
+  }
+
+  .rotulo-gargalo {
+    right: 6px;
+    top: calc(100% + 1px);
+    font-size: 8.5px;
+  }
+
+  /* No estalo o resto do feed é varrido para o lado, linha por linha. */
+  html.abertura.e-estalo .frag:not([data-marca]) {
+    translate: 110vw 0;
+    transition-delay: calc(0.3s + var(--fm) * 40ms);
+  }
+
+  /* A fila embaixo: ele no meio e o time em volta, menores; só quem está
+     trabalhando aparece aceso e com o nome (Abertura.tsx põe `data-ativo`). */
+  .cena-familiar {
+    --s: 0.8;
+  }
+
+  html.abertura.e-time .cena-juliano {
+    bottom: 10px;
+    height: 88px;
+    transition:
+      bottom 0.6s cubic-bezier(0.45, 0, 0.2, 1),
+      height 0.6s cubic-bezier(0.45, 0, 0.2, 1),
+      opacity 0.4s ease;
+  }
+
+  html.abertura.e-obra .cena-juliano {
+    height: 88px;
+  }
+
+  html.abertura.e-obra:not(.e-fim) .cena-familiar:not([data-ativo]) .familiar {
+    opacity: 0.42;
+    filter: none;
+    transition-delay: 0s;
+  }
+
+  html.abertura.e-time .etiqueta {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* A fila tem um chão: a página por baixo não aparece atrás dela. */
+  html.abertura.e-time:not(.e-fim) .cena::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 96px;
+    border-top: 1px solid var(--regua);
+    background: linear-gradient(rgb(21 26 31 / 0.85), var(--fundo) 40%);
+  }
+
+  html.abertura.e-obra:not(.e-fim) .cena-familiar[data-ativo] .etiqueta {
+    opacity: 1;
+  }
+
+  /* Na fila, o Triador espera parado a vez dele. */
+  html.abertura.e-obra:not(.e-revisao) [data-voo="triador"] .familiar {
+    animation: none;
   }
 
   .poeira {
@@ -1316,14 +1430,17 @@ html.abertura.e-fim .pino {
     top: calc(var(--pym) * 1%);
   }
 
+  /* A fila mora embaixo: o pular sobe, e o contador fica no topo, acima do feed. */
   .pular {
-    bottom: 12px;
+    top: 12px;
     right: 12px;
+    bottom: auto;
   }
 
   .pendencias {
+    top: 56px;
+    right: 16px;
     bottom: auto;
-    top: 64%;
   }
 }
 
