@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 
 import { Familiar } from "@/components/abertura/Familiar";
+import { faiscador } from "@/components/faiscas";
 import type { Cenas, EventoNo, Idioma, NomeFamiliar, Prancha } from "@/conteudo/tipos";
 import { movimentoReduzido, useAoChegar } from "./Anfitriao";
 import { EVENTO_IR } from "./Deslize";
@@ -575,8 +576,10 @@ export function Pranchas({
       faisca.setAttribute("class", "pr-faisca");
       faisca.setAttribute("r", "3.5");
       svg.append(linha, faisca);
+      const faiscar = faiscador();
       const ponta = (p: Ponto) => {
         const c = naCena(p);
+        faiscar(r, c.x, c.y);
         const f = fam.getBoundingClientRect();
         linha.setAttribute("x1", String((f.left + f.width * 0.5 - c.q.left) / c.k));
         linha.setAttribute("y1", String((f.top + f.height * 0.28 - c.q.top) / c.k));

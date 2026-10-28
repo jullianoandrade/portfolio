@@ -87,15 +87,24 @@ html.abertura.e-obra [data-obra="rotulo-casos"] {
 html.abertura.e-obra .letra {
   animation:
     letra-acende 1ms linear forwards,
-    letra-cursor 60ms steps(1);
+    letra-cursor 60ms steps(1),
+    letra-tinta 0.7s ease-out;
   animation-delay: calc(var(--i) * 60ms + 1.2s);
 }
 
 html.abertura.e-obra .letra:last-child {
   animation:
     letra-acende 1ms linear forwards,
-    cursor-pisca 0.8s steps(1) infinite;
+    cursor-pisca 0.8s steps(1) infinite,
+    letra-tinta 0.7s ease-out;
   animation-delay: calc(var(--i) * 60ms + 1.2s);
+}
+
+@keyframes letra-tinta {
+  from {
+    color: #fff4d6;
+    text-shadow: 0 0 18px rgb(240 207 134 / 0.85);
+  }
 }
 
 html.abertura.e-revisao .letra:last-child {
@@ -603,10 +612,6 @@ html.abertura.e-estalo .cartao-voo {
   transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0.4s;
 }
 
-.cartao-voo[data-arrastado] {
-  border-style: dashed;
-}
-
 .cartao-voo[data-pousou] {
   opacity: 0 !important;
   transition-duration: 0s !important;
@@ -904,6 +909,244 @@ html.abertura.e-fim .caixa-nome {
 .alca-se {
   right: -4px;
   bottom: -4px;
+}
+
+/* O laser do Arquiteto: do olho dele ao canto que puxa. */
+.lasers {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.laser-nome {
+  stroke: #f0cf86;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgb(240 207 134 / 0.9));
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.laser-ponta {
+  fill: #fff4d6;
+  filter: drop-shadow(0 0 6px #f0cf86);
+  opacity: 0;
+}
+
+.laser-nome[data-on],
+.laser-nome[data-on] + .laser-ponta {
+  opacity: 1;
+}
+
+/* O Escriba folheia enquanto o nome sai do livro. */
+html.abertura.e-obra:not(.e-revisao) [data-voo="escriba"] .familiar {
+  animation: folhear 0.36s ease-in-out 1.15s 3;
+}
+
+@keyframes folhear {
+  50% {
+    transform: scaleX(0.35);
+  }
+}
+
+/* O vento atrás do Mensageiro enquanto ele leva um card. */
+.cena-familiar[data-vento]::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 120px;
+  height: 13px;
+  margin-top: -6.5px;
+  transform-origin: 0 50%;
+  rotate: calc(var(--ang) + 180deg);
+  background:
+    linear-gradient(var(--acento), var(--acento)) 18px 0 / 70% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 30px 6px / 85% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 22px 12px / 55% 1px no-repeat;
+  mask-image: linear-gradient(to right, black, transparent);
+  animation: vento 0.28s linear infinite;
+}
+
+@keyframes vento {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* As letras do nome saindo do livro do Escriba (Abertura.tsx as solta). */
+.letra-voa {
+  position: absolute;
+  color: #fff4d6;
+  text-shadow: 0 0 14px rgb(240 207 134 / 0.8);
+  white-space: pre;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+
+/* O envelope do Mensageiro: o card fechado, com a aba e o lacre. */
+.cartao-voo > * {
+  transition: opacity 0.2s ease;
+}
+
+.cartao-voo[data-envelope] {
+  padding: 0;
+  background:
+    radial-gradient(circle, var(--acento-forte) 0 3px, transparent 3.5px) 50% 62% / 100% 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - 0.8px), var(--acento) 50%, transparent calc(50% + 0.8px)) 0 0 /
+      50% 62% no-repeat,
+    linear-gradient(to top left, transparent calc(50% - 0.8px), var(--acento) 50%, transparent calc(50% + 0.8px)) 100% 0 /
+      50% 62% no-repeat,
+    var(--fundo-elevado);
+}
+
+.cartao-voo[data-envelope] > * {
+  opacity: 0;
+}
+
+/* As linhas do card dos dados: começam embaralhadas e o Triador as separa
+   por coluna, cada coluna de uma cor. */
+.linha-dado {
+  position: absolute;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--acento);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    left 0.55s cubic-bezier(0.45, 0, 0.2, 1),
+    top 0.55s cubic-bezier(0.45, 0, 0.2, 1),
+    width 0.55s cubic-bezier(0.45, 0, 0.2, 1),
+    rotate 0.55s ease,
+    translate 0.55s ease,
+    opacity 0.3s ease;
+}
+
+.linha-dado[data-col="1"] {
+  background: #9cc3d9;
+}
+
+.linha-dado[data-col="2"] {
+  background: var(--tinta-suave);
+}
+
+.linha-dado[data-solta] {
+  opacity: 0.9;
+  rotate: var(--r);
+  translate: var(--dx) var(--dy);
+}
+
+.linha-dado[data-assentou] {
+  rotate: 0deg;
+  translate: 0 0;
+}
+
+.linha-dado[data-saiu] {
+  opacity: 0;
+}
+
+/* O Triador balança enquanto separa. */
+html.abertura.e-obra:not(.e-revisao) [data-voo="triador"] .familiar {
+  animation: arrastar 0.55s ease-in-out 1.5s 3;
+}
+
+@keyframes arrastar {
+  25% {
+    transform: rotate(-12deg);
+  }
+  75% {
+    transform: rotate(10deg);
+  }
+}
+
+/* O Guardião investe com o escudo; o carimbo bate e a frase treme. */
+html.abertura.e-revisao:not(.e-prova) [data-voo="guardiao"] .familiar {
+  animation: investir 0.5s cubic-bezier(0.3, 0.7, 0.2, 1) 0.25s;
+}
+
+@keyframes investir {
+  45% {
+    transform: translateX(26px) scale(1.2);
+    filter: drop-shadow(0 0 12px rgb(240 207 134 / 0.9));
+  }
+}
+
+html.abertura.e-revisao:not(.e-prova) .frase-efeito {
+  animation: recusa 0.32s ease-in-out 0.55s;
+}
+
+@keyframes recusa {
+  25% {
+    translate: -4px 0;
+  }
+  75% {
+    translate: 4px 0;
+  }
+}
+
+.carimbo {
+  position: relative;
+}
+
+html.abertura.e-revisao:not(.e-prova) .carimbo::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid var(--gargalo);
+  opacity: 0;
+  animation: impacto 0.55s ease-out 0.6s;
+}
+
+@keyframes impacto {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0;
+    scale: 1.9;
+  }
+}
+
+/* O Vigia varre o card dos dados antes de apontar o que quebra. */
+.varredura {
+  position: absolute;
+  overflow: hidden;
+}
+
+.varredura::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -40%;
+  height: 40%;
+  border-bottom: 1.5px solid #f0cf86;
+  background: linear-gradient(transparent, rgb(240 207 134 / 0.18));
+  box-shadow: 0 4px 12px -2px rgb(240 207 134 / 0.6);
+}
+
+html.abertura.e-prova:not(.e-fim) .varredura::before {
+  animation: varrer 1.1s ease-in-out 0.15s;
+}
+
+@keyframes varrer {
+  to {
+    translate: 0 350%;
+  }
+}
+
+html.abertura.e-prova:not(.e-fim) [data-voo="vigia"] .familiar {
+  animation: vigiar 1.1s ease-in-out 0.15s;
+}
+
+@keyframes vigiar {
+  30% {
+    transform: rotate(-14deg);
+  }
+  70% {
+    transform: rotate(14deg);
+  }
 }
 
 .medida {

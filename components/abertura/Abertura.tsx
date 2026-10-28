@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
+import { faiscador } from "@/components/faiscas";
 import { FAMILIARES, type Abertura as Textos, type NomeFamiliar } from "@/conteudo/tipos";
 import { Familiar } from "./Familiar";
 import "./abertura.css";
@@ -17,11 +18,13 @@ import "./abertura.css";
  *   estalo   ele estala: a câmera recua seca, o tempo volta, o resto é varrido, e cada dor
  *            marcada se desdobra no card do caso que a resolve
  *   time     as faíscas viram os seis agentes
- *   obra     a cena some e o time monta a página real: os cards voam das
- *            marcas até as vagas, o Arquiteto puxa a caixa do nome, o
- *            Escriba digita; ele assiste do canto
- *   revisao  o Guardião risca a frase de efeito: não passa
- *   prova    entra o número; o Vigia aponta o que quebra em escala
+ *   obra     a cena some e o time monta a página real, cada um do seu
+ *            jeito: o Arquiteto puxa a caixa do nome com o laser, o Escriba
+ *            passa por baixo do nome e as letras saem do livro, o Mensageiro
+ *            fecha o card num envelope e o abre na vaga, o Triador desmonta o
+ *            dele em linhas e as separa por coluna; ele assiste do canto
+ *   revisao  o Guardião investe com o escudo e carimba a frase: não passa
+ *   prova    entra o número; o Vigia varre o card e aponta o que quebra
  *   fim      a chamada entra; cada agente pousa onde mora
  *
  * O JavaScript só faz duas coisas: pôr a classe de cada etapa no <html> e
@@ -49,6 +52,22 @@ const PASSO_MARCA = 800;
 
 /** Quanto o Arquiteto leva para puxar a caixa do nome (igual ao CSS). */
 const PUXADA = 1300;
+
+/** Onde o Arquiteto fica em relação ao canto que o laser puxa. */
+const LONGE_DO_CANTO = { x: 78, y: 18 };
+
+/** Quando a primeira letra do nome acende e o passo entre elas (iguais ao CSS). */
+const PRIMEIRA_LETRA = 1200;
+const PASSO_LETRA = 60;
+/** Quanto cada letra leva do livro até o lugar dela. */
+const VOO_LETRA = 320;
+
+/** O card fechado em envelope, em px. */
+const ENVELOPE = { w: 46, h: 30 };
+
+/** A tabela do Triador: as linhas do card dos dados, em colunas. */
+const COLUNAS = 3;
+const LINHAS = 4;
 
 /**
  * Onde cada agente surge depois do estalo, em % da tela (desktop, celular):
@@ -123,6 +142,23 @@ export function Abertura({
   }, []);
 
   const elemento = useCallback((seletor: string) => cena.current?.querySelector<HTMLElement>(seletor) ?? null, []);
+
+  /**
+   * O vento atrás do Mensageiro enquanto ele leva um card: linhas na direção
+   * contrária à do voo, que somem quando ele chega.
+   */
+  const ventar = useCallback(
+    (nome: NomeFamiliar, x: number, y: number, duracao: number) => {
+      const el = elemento(`[data-voo="${nome}"]`);
+      const de = el?.getBoundingClientRect();
+      if (!el || !de) return;
+      const angulo = Math.atan2(y - (de.top + de.height / 2), x - (de.left + de.width / 2));
+      el.style.setProperty("--ang", `${angulo}rad`);
+      el.setAttribute("data-vento", "");
+      relogios.current.push(window.setTimeout(() => el.removeAttribute("data-vento"), duracao));
+    },
+    [elemento],
+  );
 
   /** Leva um agente até um ponto da tela, em px, na escala e no tempo dados. */
   const voar = useCallback(
@@ -281,6 +317,156 @@ export function Abertura({
   }, [depois, elemento, focar, moverCard]);
 
   /**
+   * O Escriba passa por baixo do nome, letra por letra, e cada uma sai do
+   * livro dele e voa até o seu lugar, chegando quando ela acende no CSS.
+   */
+  const ditar = useCallback(
+    (nome: DOMRect) => {
+      const palco = cena.current;
+      const corpo = elemento('[data-voo="escriba"] .familiar');
+      if (!palco || !corpo) return;
+      const letras = [...document.querySelectorAll<HTMLElement>('[data-alvo="nome"] .letra')];
+      const casa = (r: DOMRect): [number, number] => [r.left + r.width / 2, r.bottom + 30];
+      const primeira = letras[0]?.getBoundingClientRect();
+      if (primeira) voar("escriba", ...casa(primeira), 1.15, 900);
+      letras.forEach((letra, i) => {
+        const texto = letra.textContent ?? "";
+        const r = letra.getBoundingClientRect();
+        const quando = PRIMEIRA_LETRA + i * PASSO_LETRA - VOO_LETRA;
+        depois(quando - 120, () => voar("escriba", ...casa(r), 1.15, 160));
+        if (!texto.trim()) return;
+        depois(quando, () => {
+          const livro = corpo.getBoundingClientRect();
+          const estilo = getComputedStyle(letra);
+          const voa = document.createElement("span");
+          voa.className = "letra-voa";
+          voa.textContent = texto;
+          Object.assign(voa.style, {
+            left: `${r.left}px`,
+            top: `${r.top}px`,
+            fontFamily: estilo.fontFamily,
+            fontSize: estilo.fontSize,
+            lineHeight: estilo.lineHeight,
+            letterSpacing: estilo.letterSpacing,
+          });
+          palco.append(voa);
+          const dx = livro.left + livro.width / 2 - (r.left + r.width / 2);
+          const dy = livro.top + livro.height * 0.3 - (r.top + r.height / 2);
+          voa
+            .animate(
+              [
+                { transform: `translate(${dx}px, ${dy}px) scale(0.25)`, opacity: 0 },
+                { opacity: 1, offset: 0.25 },
+                { transform: "none", opacity: 1 },
+              ],
+              { duration: VOO_LETRA, easing: "cubic-bezier(0.3, 0.6, 0.3, 1)", fill: "forwards" },
+            )
+            .finished.then(
+              () => voa.remove(),
+              () => voa.remove(),
+            );
+        });
+      });
+      // Escrito o nome, ele volta para o canto de onde vê a obra.
+      depois(PRIMEIRA_LETRA + letras.length * PASSO_LETRA + 150, () => {
+        const estreito = innerWidth < 640;
+        voar("escriba", estreito ? innerWidth - 42 : nome.right + 40, estreito ? nome.bottom - 8 : nome.top - 2, 1.15, 700);
+      });
+    },
+    [depois, elemento, voar],
+  );
+
+  /**
+   * O Mensageiro fecha o card num envelope onde ele está, leva voando até a
+   * vaga e ali o abre: quem pousa é o card inteiro.
+   */
+  const entregar = useCallback(
+    (i: number, vaga: DOMRect) => {
+      const el = elemento(`[data-cv="${i}"]`);
+      const de = el?.getBoundingClientRect();
+      if (!el || !de) return;
+      el.setAttribute("data-envelope", "");
+      moverCard(i, { left: de.right - ENVELOPE.w, top: de.top, width: ENVELOPE.w, height: ENVELOPE.h }, 380);
+      depois(420, () => {
+        const [x, y] = cantoDoCard(vaga);
+        ventar("mensageiro", x, y, 1100);
+        voar("mensageiro", x, y, 1.05, 1100);
+        moverCard(
+          i,
+          { left: vaga.right - ENVELOPE.w - 8, top: vaga.top + 6, width: ENVELOPE.w, height: ENVELOPE.h },
+          1100,
+          -8,
+        );
+        depois(1150, () => {
+          el.removeAttribute("data-envelope");
+          moverCard(i, vaga, 450);
+          depois(480, () => pousarCard(i));
+        });
+      });
+    },
+    [depois, elemento, moverCard, pousarCard, ventar, voar],
+  );
+
+  /**
+   * O Triador desmonta o card dos dados em linhas embaralhadas e as separa,
+   * coluna por coluna, dentro da vaga; assentada a última, o card de verdade
+   * aparece no lugar da tabela.
+   */
+  const ordenar = useCallback(
+    (vaga: DOMRect) => {
+      const el = elemento('[data-cv="2"]');
+      const de = el?.getBoundingClientRect();
+      const palco = cena.current;
+      if (!el || !de || !palco) return;
+      voar("triador", de.right + 6, de.top - 14, 1.05, 1000);
+      const casa = (r: Retangulo, c: number, l: number) => {
+        const largura = (r.width - 44) / COLUNAS;
+        return {
+          left: `${r.left + 22 + c * largura}px`,
+          top: `${r.top + 26 + (l * (r.height - 60)) / (LINHAS - 1)}px`,
+          width: `${largura - 12}px`,
+        };
+      };
+      const lugares = [...Array(COLUNAS * LINHAS).keys()];
+      const origens = [...lugares].sort(() => Math.random() - 0.5);
+      const pecas = lugares.map((d, k) => {
+        const p = document.createElement("i");
+        p.className = "linha-dado";
+        p.dataset.col = String(d % COLUNAS);
+        p.style.setProperty("--r", `${(Math.random() - 0.5) * 30}deg`);
+        p.style.setProperty("--dx", `${(Math.random() - 0.5) * 40}px`);
+        p.style.setProperty("--dy", `${(Math.random() - 0.5) * 30}px`);
+        Object.assign(p.style, casa(de, origens[k] % COLUNAS, Math.floor(origens[k] / COLUNAS)));
+        palco.append(p);
+        return p;
+      });
+      // O card se desfaz nas linhas, que se espalham tortas.
+      depois(1000, () => {
+        el.setAttribute("data-pousou", "");
+        pecas.forEach((p) => p.setAttribute("data-solta", ""));
+      });
+      depois(1500, () => {
+        const [x, y] = cantoDoCard(vaga);
+        voar("triador", x, y, 1.05, 1300);
+        lugares.forEach((d, k) => {
+          const c = d % COLUNAS;
+          const l = Math.floor(d / COLUNAS);
+          depois((c * LINHAS + l) * 100, () => {
+            Object.assign(pecas[k].style, casa(vaga, c, l));
+            pecas[k].setAttribute("data-assentou", "");
+          });
+        });
+      });
+      depois(1500 + COLUNAS * LINHAS * 100 + 650, () => {
+        pousarCard(2);
+        pecas.forEach((p) => p.setAttribute("data-saiu", ""));
+        depois(400, () => pecas.forEach((p) => p.remove()));
+      });
+    },
+    [depois, elemento, pousarCard, voar],
+  );
+
+  /**
    * O Arquiteto puxa a caixa do nome pelo canto inferior direito: a caixa
    * cresce do tamanho de partida até o real, e a medida conta junto.
    */
@@ -298,19 +484,45 @@ export function Abertura({
         height: `${h0}px`,
       });
       medida.textContent = `${w0} × ${h0}`;
-      voar("arquiteto", bloco.left + w0, bloco.top + h0, 1.15, 900);
+      // Ele não encosta: fica ao lado do canto e puxa com o laser. Na tela
+      // estreita não há lado, então fica embaixo.
+      const estreito = innerWidth < 640;
+      const longe = (x: number, y: number): [number, number] =>
+        estreito ? [x - 10, y + 64] : [x + LONGE_DO_CANTO.x, y + LONGE_DO_CANTO.y];
+      voar("arquiteto", ...longe(bloco.left + w0, bloco.top + h0), 1.15, 900);
 
+      const feixe = elemento(".laser-nome");
+      const ponta = elemento(".laser-ponta");
+      const corpo = elemento('[data-voo="arquiteto"] .familiar');
+      const faiscar = faiscador();
       depois(950, () => {
         el.style.width = `${bloco.width}px`;
         el.style.height = `${bloco.height}px`;
-        voar("arquiteto", bloco.right, bloco.bottom, 1.15, PUXADA);
+        voar("arquiteto", ...longe(bloco.right, bloco.bottom), 1.15, PUXADA);
+        feixe?.setAttribute("data-on", "");
         const inicio = performance.now();
         const contar = (agora: number) => {
           const t = Math.min((agora - inicio) / PUXADA, 1);
           // mesma curva do CSS (ease-in-out), para o número acompanhar a borda
           const k = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-          medida.textContent = `${Math.round(w0 + (bloco.width - w0) * k)} × ${Math.round(h0 + (bloco.height - h0) * k)}`;
+          const w = w0 + (bloco.width - w0) * k;
+          const h = h0 + (bloco.height - h0) * k;
+          medida.textContent = `${Math.round(w)} × ${Math.round(h)}`;
+          // O feixe sai do olho dele e toca o canto, onde saltam as faíscas.
+          const olho = corpo?.getBoundingClientRect();
+          const x = bloco.left + w;
+          const y = bloco.top + h;
+          if (feixe && olho) {
+            feixe.setAttribute("x1", String(olho.left + olho.width * 0.5));
+            feixe.setAttribute("y1", String(olho.top + olho.height * 0.28));
+            feixe.setAttribute("x2", String(x));
+            feixe.setAttribute("y2", String(y));
+            ponta?.setAttribute("cx", String(x));
+            ponta?.setAttribute("cy", String(y));
+          }
+          if (cena.current) faiscar(cena.current, x, y);
           if (t < 1) quadros.current.push(requestAnimationFrame(contar));
+          else feixe?.removeAttribute("data-on");
         };
         quadros.current.push(requestAnimationFrame(contar));
       });
@@ -358,10 +570,10 @@ export function Abertura({
     }
 
     puxarCaixa(bloco);
+    ditar(nome);
     // Na tela estreita não há margem: quem esperaria ao lado do texto espera
     // na borda direita, sem cobrir o começo das linhas.
     const estreito = innerWidth < 640;
-    voar("escriba", estreito ? innerWidth - 42 : nome.right + 40, estreito ? nome.bottom - 8 : nome.top - 2, 1.15);
     voar(
       "guardiao",
       estreito ? innerWidth - 42 : bloco.left - 48,
@@ -375,10 +587,8 @@ export function Abertura({
     if (c0) voar("mensageiro", c0.right - 24, c0.top - 12, 1.05, 900);
     depois(1000, () => {
       const v0 = vagas[0];
-      if (!levarPara(0, v0, 1100) || !v0) return;
-      const [x, y] = cantoDoCard(v0);
-      voar("mensageiro", x, y, 1.05, 1100);
-      depois(1150, () => pousarCard(0));
+      if (v0 && v0.top < innerHeight) entregar(0, v0);
+      else levarPara(0, v0, 1100);
     });
 
     // O segundo espera encolhido na borda direita, ao lado do nome, até o
@@ -398,33 +608,15 @@ export function Abertura({
       levarPara(1, vagas[1], 1000);
     }
 
-    // O Triador arrasta o terceiro, torto e tracejado, até a vaga que acende.
+    // O Triador desmonta o terceiro e o remonta na vaga que acende.
     const v2 = vagas[2];
     if (!v2 || v2.top >= innerHeight) {
       voar("triador", innerWidth - 42, bloco.bottom + 44, 1.05);
       levarPara(2, v2, 1000);
     } else {
-      elemento('[data-cv="2"]')?.setAttribute("data-arrastado", "");
-      moverCard(
-        2,
-        {
-          left: v2.left + 40,
-          top: v2.top + 90,
-          width: v2.width,
-          height: v2.height,
-        },
-        1000,
-        -5,
-      );
-      voar("triador", v2.right + 50, v2.bottom + 100, 1.05, 1000);
-      depois(1680, () => {
-        const [x, y] = cantoDoCard(v2);
-        moverCard(2, v2, 1700);
-        voar("triador", x, y, 1.05, 1700);
-        depois(1750, () => pousarCard(2));
-      });
+      ordenar(v2);
     }
-  }, [depois, elemento, levarPara, moverCard, pousarCard, puxarCaixa, voar]);
+  }, [depois, ditar, elemento, entregar, levarPara, moverCard, ordenar, puxarCaixa, voar]);
 
   const revisao = useCallback(() => {
     const frase = caixa('[data-alvo="frase"]');
@@ -435,12 +627,10 @@ export function Abertura({
     if (c1) voar("mensageiro", c1.left + 20, c1.top - 12, 1.05, 500);
     depois(550, () => {
       const v1 = caixa('[data-vaga="1"]');
-      if (!levarPara(1, v1, 1100) || !v1) return;
-      const [x, y] = cantoDoCard(v1);
-      voar("mensageiro", x, y, 1.05, 1100);
-      depois(1150, () => pousarCard(1));
+      if (v1 && v1.top < innerHeight) entregar(1, v1);
+      else levarPara(1, v1, 1100);
     });
-  }, [comentar, depois, elemento, levarPara, pousarCard, voar]);
+  }, [comentar, depois, elemento, entregar, levarPara, voar]);
 
   const prova = useCallback(() => {
     const v2 = caixa('[data-vaga="2"]');
@@ -450,6 +640,14 @@ export function Abertura({
       pino.style.left = `${v2.right - 14}px`;
       pino.style.top = `${v2.top + 14}px`;
     }
+    const varredura = elemento(".varredura");
+    if (varredura)
+      Object.assign(varredura.style, {
+        left: `${v2.left}px`,
+        top: `${v2.top}px`,
+        width: `${v2.width}px`,
+        height: `${Math.min(v2.height, innerHeight - v2.top)}px`,
+      });
     comentar('[data-c="vigia"]', v2, true);
   }, [comentar, elemento]);
 
@@ -476,11 +674,14 @@ export function Abertura({
   /** Devolve cada peça ao seu lugar de cena, para um "ver de novo". */
   const limpar = useCallback(() => {
     cena.current?.querySelectorAll<HTMLElement>("[data-voo], [data-cv]").forEach((el) => {
-      for (const p of ["left", "top", "width", "height", "--s", "--dur", "--giro", "--escala"])
+      for (const p of ["left", "top", "width", "height", "--s", "--dur", "--giro", "--escala", "--ang"])
         el.style.removeProperty(p);
       el.removeAttribute("data-pousou");
-      el.removeAttribute("data-arrastado");
+      el.removeAttribute("data-envelope");
+      el.removeAttribute("data-vento");
     });
+    elemento(".laser-nome")?.removeAttribute("data-on");
+    cena.current?.querySelectorAll(".faisca-voa, .letra-voa, .linha-dado").forEach((f) => f.remove());
     document.querySelectorAll("[data-chegou]").forEach((el) => el.removeAttribute("data-chegou"));
     mundo.current?.removeAttribute("style");
     for (const p of ["left", "bottom"]) elemento(".cena-juliano")?.style.removeProperty(p);
@@ -626,6 +827,11 @@ export function Abertura({
         <i className="alca alca-so" />
         <span className="medida" />
       </div>
+      <svg className="lasers">
+        <line className="laser-nome" />
+        <circle className="laser-ponta" r="3.5" />
+      </svg>
+      <div className="varredura" />
 
       {/* ------------------------------------------------- o time */}
       {FAMILIARES.map((nome, n) => {

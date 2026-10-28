@@ -214,3 +214,77 @@ html.deslizando {
   scroll-snap-type: none !important;
   scroll-behavior: auto !important;
 }
+
+/* As faíscas do laser do Arquiteto (components/faiscas.ts): saltam do ponto
+   onde o feixe toca e caem apagando. */
+.faisca-voa {
+  position: absolute;
+  z-index: 45;
+  width: 4px;
+  height: 4px;
+  margin: -2px;
+  border-radius: 50%;
+  background: #fff4d6;
+  box-shadow: 0 0 8px 2px #f0cf86;
+  pointer-events: none;
+  animation: faisca-voa 0.6s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+}
+
+@keyframes faisca-voa {
+  to {
+    translate: var(--dx) calc(var(--dy) + 18px);
+    scale: 0.3;
+    opacity: 0;
+  }
+}
+
+/* O Vigia sempre de olho (components/cenas/OlharDoVigia.tsx): a pupila segue
+   o mouse e, sem ele, faz a ronda de um lado ao outro; de tempos em tempos
+   ele pisca. */
+.pupila-vigia {
+  transition: translate 0.25s ease-out;
+}
+
+.olho-vigia {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vigia-pisca 5.5s infinite;
+}
+
+@keyframes vigia-pisca {
+  0%,
+  94%,
+  100% {
+    scale: 1 1;
+  }
+  97% {
+    scale: 1 0.12;
+  }
+}
+
+html.vigia-ronda .pupila-vigia {
+  animation: vigia-ronda 4.8s ease-in-out infinite;
+}
+
+@keyframes vigia-ronda {
+  0%,
+  100% {
+    translate: -2.3px 0.4px;
+  }
+  40% {
+    translate: 2.3px 0.4px;
+  }
+  60% {
+    translate: 2.3px -0.6px;
+  }
+  80% {
+    translate: 0 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .olho-vigia,
+  html.vigia-ronda .pupila-vigia {
+    animation: none;
+  }
+}

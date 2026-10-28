@@ -1049,11 +1049,7 @@ export const en: Conteudo = {
       rotulo: "The team",
       titulo: ["Six agents,", "six rules of mine."],
       texto: "Each one exists because I follow a rule. Hover to meet them.",
-      montagem: {
-        mensageiro: "Bringing the title. The letters fall into place.",
-        guardiao: "Checked before release. Go ahead and read.",
-        carimbo: "checked",
-      },
+      montagem: { carimbo: "checked" },
       rotulos: { porQue: "Why it's here", onde: "Where it shows" },
       fichas: {
         escriba: {
@@ -1098,7 +1094,6 @@ export const en: Conteudo = {
       titulo: "Shall we build the next one?",
       texto: "Got a project or a stuck process? Tell me, and I'll come back with the design of the system.",
       fala: "Write it and I'll carry it. He answers.",
-      montagem: { escriba: "Let me write this." },
     },
   },
 };

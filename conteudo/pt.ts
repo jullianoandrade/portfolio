@@ -1069,11 +1069,7 @@ export const pt: Conteudo = {
       rotulo: "O time",
       titulo: ["Seis agentes,", "seis regras minhas."],
       texto: "Cada um existe porque eu sigo uma regra. Passe o mouse para conhecer.",
-      montagem: {
-        mensageiro: "Trago o título. As letras caem no lugar.",
-        guardiao: "Conferi antes de liberar. Pode ler.",
-        carimbo: "conferido",
-      },
+      montagem: { carimbo: "conferido" },
       rotulos: { porQue: "Por que está aqui", onde: "Onde isso aparece" },
       fichas: {
         escriba: {
@@ -1118,7 +1114,6 @@ export const pt: Conteudo = {
       titulo: "Vamos construir o próximo?",
       texto: "Tem um projeto ou um processo travado? Me conta, e eu volto com o desenho do sistema.",
       fala: "Escreve que eu levo. Ele responde.",
-      montagem: { escriba: "Deixa que eu escrevo." },
     },
   },
 };

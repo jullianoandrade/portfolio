@@ -9,7 +9,7 @@ import type { NomeFamiliar } from "@/conteudo/tipos";
  *   guardiao    confere a saída        escudo
  *   arquiteto   monta a estrutura      compasso
  *   mensageiro  entrega no lugar       dardo alado
- *   vigia       olha lá na frente      lanterna alta
+ *   vigia       olha lá na frente      lanterna alta, de olho em você
  *
  * O brilho do olho vem de `drop-shadow` no <svg> inteiro (CSS), não de filtro
  * SVG: assim não há `id` de filtro repetido quando o mesmo familiar aparece na
@@ -74,7 +74,11 @@ function Corpo({ nome }: { nome: NomeFamiliar }) {
           <path d="M-9,-22 L9,-22 L12,-17 L-12,-17 Z" fill={CORPO} stroke={TRACO} strokeWidth="1.4" />
           <rect x="-10" y="-17" width="20" height="30" rx="2" fill={CORPO} stroke={TRACO} strokeWidth="1.5" />
           <path d="M-10,13 L10,13 L7,19 L-7,19 Z" fill={CORPO} stroke={TRACO} strokeWidth="1.4" />
-          <circle cx="0" cy="-2" r="5" fill={OLHO} />
+          {/* O olho dele pisca e a pupila segue você (OlharDoVigia.tsx). */}
+          <g className="olho-vigia">
+            <circle cx="0" cy="-2" r="5" fill={OLHO} />
+            <circle className="pupila-vigia" cx="0" cy="-2" r="2" fill={CORPO} />
+          </g>
         </>
       );
   }

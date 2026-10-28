@@ -10,6 +10,7 @@ import { Deslize } from "@/components/cenas/Deslize";
 import { hashDoSistema } from "@/components/cenas/endereco";
 import { Pranchas } from "@/components/cenas/Pranchas";
 import { Time } from "@/components/cenas/Time";
+import { OlharDoVigia } from "@/components/cenas/OlharDoVigia";
 import { TrilhoVigia } from "@/components/cenas/TrilhoVigia";
 import { IDIOMAS, ehIdioma, obterConteudo, outroIdioma } from "@/conteudo";
 import { FAMILIARES, type NomeFamiliar } from "@/conteudo/tipos";
@@ -282,6 +283,7 @@ export default async function Home({ params }: { params: Promise<{ idioma: strin
       {/* Fora do `data-obra`: a abertura mexe em transform ali, e um pai com
           transform tira o `fixed` do lugar. O trilho se esconde sozinho. */}
       <TrilhoVigia cenas={trilho} rotulo={ui.navegacao.casos} />
+      <OlharDoVigia />
       <Deslize />
 
       {/* Os cards que nascem das marcas na abertura: os da primeira fileira. */}

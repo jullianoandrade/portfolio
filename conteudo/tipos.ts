@@ -460,15 +460,14 @@ export interface Cenas {
     texto: string;
     rotulos: { porQue: string; onde: string };
     fichas: Record<NomeFamiliar, FichaAgente>;
-    /** O que se diz enquanto o time se monta, na primeira chegada. */
-    montagem: { mensageiro: string; guardiao: string; carimbo: string };
+    /** O carimbo do Guardião na ficha, quando o time se monta na primeira chegada. */
+    montagem: { carimbo: string };
   };
   contato: {
     rotulo: string;
     titulo: string;
     texto: string;
     fala: string;
-    montagem: { escriba: string };
   };
 }
 

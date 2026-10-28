@@ -972,20 +972,59 @@
   color: var(--acento);
 }
 
-.voador-balao {
+/* O ofício nas montagens (oficio.ts): as letras que saem do livro do
+   Escriba e o contorno que o Arquiteto risca com o laser. */
+.letra-ditada {
   position: absolute;
-  bottom: 58px;
-  left: 18px;
-  width: 230px;
-  border: 1px solid var(--acento);
-  background: var(--fundo-afundado);
-  padding: 8px 10px;
-  text-align: left;
-  font-family: var(--font-geist-mono);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--tinta);
+  z-index: 31;
+  color: #fff4d6;
+  text-shadow: 0 0 14px rgb(240 207 134 / 0.8);
+  white-space: pre;
+  pointer-events: none;
 }
+
+.risco-laser {
+  position: absolute;
+  inset: 0;
+  z-index: 29;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.risco-laser rect {
+  fill: none;
+  stroke: var(--acento-forte);
+  stroke-width: 1.5;
+  transition: opacity 0.6s ease;
+}
+
+.risco-laser[data-pronto] rect {
+  opacity: 0;
+}
+
+.risco-laser line {
+  stroke: #f0cf86;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgb(240 207 134 / 0.9));
+}
+
+/* O Guardião chega investindo com o escudo, na hora do carimbo. */
+.voador[data-gesto="investir"] .voador-corpo {
+  animation:
+    investir-voador 0.5s cubic-bezier(0.3, 0.7, 0.2, 1) 0.25s,
+    pr-paira 2.6s ease-in-out 0.75s infinite;
+}
+
+@keyframes investir-voador {
+  45% {
+    transform: translate(-22px, 14px) scale(1.2);
+    filter: drop-shadow(0 0 12px rgb(240 207 134 / 0.95));
+  }
+}
+
 
 .palavra {
   display: inline-block;
@@ -1346,18 +1385,6 @@ html.abertura .trilho {
   animation: gesto-livro 0.7s ease-in-out;
 }
 
-.roda-membro[data-nome="arquiteto"]:hover .roda-corpo {
-  animation: gesto-compasso 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.roda-membro[data-nome="vigia"]:hover .roda-corpo {
-  animation: gesto-varre 0.9s ease-in-out;
-}
-
-.roda-membro[data-nome="triador"]:hover .roda-corpo {
-  animation: gesto-separa 0.7s ease-in-out;
-}
-
 @keyframes gesto-guarda {
   35% {
     transform: scale(1.18);
@@ -1375,45 +1402,356 @@ html.abertura .trilho {
   }
 }
 
-@keyframes gesto-compasso {
+/* O Arquiteto risca um nó com o laser (Contato.tsx move o feixe). */
+.roda-desenho {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.roda-desenho rect {
+  fill: transparent;
+  stroke: var(--acento);
+  stroke-width: 1.3;
+  rx: 3px;
+  opacity: 0;
+  transition:
+    opacity 0.5s ease 0.35s,
+    fill 0.3s ease;
+}
+
+.roda-desenho line {
+  stroke: #f0cf86;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px rgb(240 207 134 / 0.9));
+  opacity: 0;
+}
+
+.roda-membro[data-desenhando="traco"] .roda-desenho rect {
+  opacity: 1;
+  transition: none;
+}
+
+.roda-membro[data-desenhando="traco"] .roda-desenho line {
+  opacity: 1;
+}
+
+.roda-membro[data-desenhando="pronto"] .roda-desenho rect {
+  fill: rgb(201 164 92 / 0.18);
+}
+
+/* O Triador: linhas embaralhadas saem dele e se separam em três colunas. */
+.roda-linha {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 10px;
+  height: 3px;
+  margin-left: -5px;
+  border-radius: 1px;
+  background: var(--acento);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roda-linha[data-col="1"] {
+  background: #9cc3d9;
+}
+
+.roda-linha[data-col="2"] {
+  background: var(--tinta-suave);
+}
+
+.roda-membro[data-nome="triador"]:hover .roda-linha {
+  /* cada uma assenta na sua vez, coluna por coluna */
+  animation: separar 1.5s cubic-bezier(0.45, 0, 0.2, 1) calc(var(--ordem) * 70ms) backwards;
+}
+
+.contato-roda:has(.contato-eu:hover) .roda-linha {
+  animation: separar 1.5s cubic-bezier(0.45, 0, 0.2, 1) calc(0.42s + var(--n) * 90ms + var(--ordem) * 70ms) backwards;
+}
+
+@keyframes separar {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+    rotate: 0deg;
+  }
+  15% {
+    opacity: 1;
+    translate: var(--sx) var(--sy);
+    rotate: var(--sr);
+  }
+  60%,
+  85% {
+    opacity: 1;
+    translate: var(--tx) var(--ty);
+    rotate: 0deg;
+  }
+  to {
+    opacity: 0;
+    translate: var(--tx) var(--ty);
+  }
+}
+
+/* O Vigia acende o farol e varre o caminho à frente, por cima do time. A
+   roda recorta o que passa da borda: o feixe parado aponta para fora da
+   tela e não pode abrir rolagem lateral. */
+.contato-roda {
+  overflow-x: clip;
+}
+
+.roda-farol {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 230px;
+  height: 64px;
+  margin-top: -32px;
+  transform-origin: 0 50%;
+  clip-path: polygon(0 44%, 100% 0, 100% 100%, 0 56%);
+  background: linear-gradient(to right, rgb(240 207 134 / 0.5), rgb(240 207 134 / 0.08) 75%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roda-membro[data-nome="vigia"]:hover .roda-farol {
+  animation: farol 1.8s ease-in-out;
+}
+
+.contato-roda:has(.contato-eu:hover) .roda-farol {
+  animation: farol 1.8s ease-in-out calc(0.42s + var(--n) * 90ms) backwards;
+}
+
+.roda-membro[data-nome="vigia"]:hover .roda-corpo,
+.contato-roda:has(.contato-eu:hover) [data-nome="vigia"] .roda-corpo {
+  filter: drop-shadow(0 0 10px rgb(240 207 134 / 0.8));
+  transition: filter 0.3s ease;
+}
+
+@keyframes farol {
+  from {
+    opacity: 0;
+    rotate: 160deg;
+  }
+  15% {
+    opacity: 1;
+  }
+  50% {
+    rotate: 205deg;
+  }
+  85% {
+    opacity: 1;
+    rotate: 175deg;
+  }
+  to {
+    opacity: 0;
+    rotate: 180deg;
+  }
+}
+
+/* As letras que sobem do livro do Escriba: o nome dele, uma de cada vez. */
+.roda-letra {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  color: var(--acento-forte);
+  font-family: var(--font-gravura), serif;
+  font-size: 15px;
+  text-shadow: 0 0 8px rgb(240 207 134 / 0.7);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roda-membro[data-nome="escriba"]:hover .roda-letra {
+  animation: letra-sobe 1.2s ease-out calc(var(--k) * 110ms) backwards;
+}
+
+.contato-roda:has(.contato-eu:hover) .roda-letra {
+  animation: letra-sobe 1.2s ease-out calc(0.42s + var(--k) * 110ms) backwards;
+}
+
+@keyframes letra-sobe {
+  from {
+    opacity: 0;
+    translate: -50% 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    translate: calc(-50% + var(--lado)) -54px;
+  }
+}
+
+/* O Mensageiro dá um laço no ar com o envelope, o vento atrás; no alto do
+   laço o envelope sai para o botão de e-mail (Contato.tsx o lança) e ele
+   volta ao lugar de mãos vazias. */
+.carta-corpo {
+  position: relative;
+  display: block;
+}
+
+.carta-envelope,
+.voador-envelope,
+.envelope-voa {
+  position: absolute;
+  left: -6px;
+  top: 62%;
+  width: 22px;
+  height: 15px;
+  border: 1px solid var(--acento);
+  border-radius: 1px;
+  background:
+    radial-gradient(circle, var(--acento-forte) 0 1.6px, transparent 2px) 50% 62% / 100% 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - 0.6px), var(--acento) 50%, transparent calc(50% + 0.6px)) 0 0 /
+      50% 62% no-repeat,
+    linear-gradient(to top left, transparent calc(50% - 0.6px), var(--acento) 50%, transparent calc(50% + 0.6px)) 100% 0 /
+      50% 62% no-repeat,
+    var(--fundo-elevado);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.carta-corpo::before {
+  content: "";
+  position: absolute;
+  left: 70%;
+  top: 50%;
+  width: 70px;
+  height: 11px;
+  margin-top: -5.5px;
+  background:
+    linear-gradient(var(--acento), var(--acento)) 0 0 / 70% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 12px 5px / 85% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 4px 10px / 55% 1px no-repeat;
+  mask-image: linear-gradient(to right, black, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* O Mensageiro da montagem chega trazendo o envelope. */
+.voador .voador-envelope {
+  left: 18px;
+  top: 64%;
+  opacity: 1;
+}
+
+/* O envelope lançado, a caminho do botão de e-mail (oficio.ts). */
+.envelope-voa {
+  z-index: 31;
+  opacity: 1;
+  box-shadow: 0 0 12px rgb(240 207 134 / 0.5);
+}
+
+/* O botão de e-mail acende quando o envelope entra nele. */
+.botao-email.recebeu {
+  animation: recebeu 0.65s ease-out;
+}
+
+@keyframes recebeu {
+  30% {
+    scale: 1.05;
+    box-shadow:
+      0 0 0 4px rgb(240 207 134 / 0.35),
+      0 0 28px rgb(240 207 134 / 0.6);
+  }
+}
+
+/* Quem voa na montagem com o vento atrás (virado para a esquerda, o vento
+   fica à direita). */
+.voador[data-gesto="voar"] .voador-corpo::before {
+  content: "";
+  position: absolute;
+  left: 62%;
+  top: 50%;
+  width: 80px;
+  height: 11px;
+  margin-top: -5.5px;
+  background:
+    linear-gradient(var(--acento), var(--acento)) 0 0 / 70% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 12px 5px / 85% 1px no-repeat,
+    linear-gradient(var(--acento), var(--acento)) 4px 10px / 55% 1px no-repeat;
+  rotate: -28deg;
+  transform-origin: 0 50%;
+  mask-image: linear-gradient(to right, black, transparent);
+  animation: vento-sopra 0.28s linear infinite;
+}
+
+@keyframes vento-sopra {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.voador[data-gesto="voar"] .voador-corpo {
+  animation: inclinar-voo 0.95s ease-in-out;
+}
+
+@keyframes inclinar-voo {
+  30% {
+    rotate: -14deg;
+  }
+  80% {
+    rotate: 6deg;
+  }
+}
+
+.mensageiro-carta:hover .carta-corpo {
+  animation: entregar 1s cubic-bezier(0.45, 0.05, 0.4, 1);
+}
+
+.mensageiro-carta:hover .carta-envelope {
+  animation: envelope-vai 1s linear;
+}
+
+.mensageiro-carta:hover .carta-corpo::before {
+  animation: vento-vai 1s linear;
+}
+
+/* Ele recua para tomar impulso e faz o laço no sentido do relógio: virado
+   para a esquerda, sobe pela esquerda, passa por cima e desce pela direita. */
+@keyframes entregar {
+  10% {
+    transform: translate(6px, 3px) rotate(-10deg);
+  }
+  30% {
+    transform: translate(-28px, -26px) rotate(90deg);
+  }
+  50% {
+    transform: translate(0, -56px) rotate(180deg);
+  }
+  70% {
+    transform: translate(28px, -28px) rotate(270deg);
+  }
+  90% {
+    transform: translate(3px, -2px) rotate(352deg);
+  }
   to {
     transform: rotate(360deg);
   }
 }
 
-@keyframes gesto-varre {
-  25% {
-    transform: translateX(-7px) rotate(-6deg);
+/* O envelope vai na mão até o alto do laço; dali quem segue é o lançado. */
+@keyframes envelope-vai {
+  6%,
+  49% {
+    opacity: 1;
   }
-  75% {
-    transform: translateX(7px) rotate(6deg);
-  }
-}
-
-/* O Mensageiro dá uma volta no ar, como quem já vai sair com a carta. */
-.carta-corpo {
-  display: block;
-}
-
-.mensageiro-carta:hover .carta-corpo {
-  animation: gesto-carta 0.9s cubic-bezier(0.45, 0, 0.3, 1);
-}
-
-@keyframes gesto-carta {
-  30% {
-    transform: translate(6px, -14px) rotate(-12deg);
-  }
-  60% {
-    transform: translate(-6px, -18px) rotate(10deg);
+  50% {
+    opacity: 0;
   }
 }
 
-@keyframes gesto-separa {
-  25% {
-    transform: rotate(-16deg);
-  }
-  65% {
-    transform: rotate(14deg);
+@keyframes vento-vai {
+  20%,
+  85% {
+    opacity: 0.8;
   }
 }
 
@@ -1485,28 +1823,26 @@ html.abertura .trilho {
   animation-duration: 0.7s;
 }
 
-.contato-roda:has(.contato-eu:hover) [data-nome="arquiteto"] .roda-corpo {
-  animation-name: gesto-compasso;
-  animation-duration: 0.8s;
-}
-
-.contato-roda:has(.contato-eu:hover) [data-nome="vigia"] .roda-corpo {
-  animation-name: gesto-varre;
-  animation-duration: 0.9s;
-}
-
-.contato-roda:has(.contato-eu:hover) [data-nome="triador"] .roda-corpo {
-  animation-name: gesto-separa;
-  animation-duration: 0.7s;
-}
-
 .contato:has(.contato-eu:hover) .carta-corpo {
-  animation: gesto-carta 0.9s cubic-bezier(0.45, 0, 0.3, 1) 0.9s backwards;
+  animation: entregar 1s cubic-bezier(0.45, 0.05, 0.4, 1) 0.9s backwards;
+}
+
+.contato:has(.contato-eu:hover) .carta-envelope {
+  animation: envelope-vai 1s linear 0.9s backwards;
+}
+
+.contato:has(.contato-eu:hover) .carta-corpo::before {
+  animation: vento-vai 1s linear 0.9s backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .roda-corpo,
+  .roda-letra,
+  .roda-linha,
+  .roda-farol,
   .carta-corpo,
+  .carta-corpo::before,
+  .carta-envelope,
   .contato-eu .sprite-juliano,
   .eu-estalo,
   .contato-roda:has(.contato-eu:hover) .roda-corpo,
@@ -1524,14 +1860,21 @@ html.abertura .trilho {
 /* O time */
 .time-cena[data-montagem="vazia"] .letra-cai {
   opacity: 0;
-  translate: 0 -22px;
 }
 
+/* Cada letra acende quando chega do livro do Escriba (Time.tsx: INICIO_LETRAS
+   e PASSO_LETRA). */
 .time-cena[data-montagem="titulo"] .letra-cai {
-  transition:
-    opacity 0.25s,
-    translate 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
-  transition-delay: calc(var(--i) * 18ms);
+  transition: opacity 0s;
+  transition-delay: calc(var(--i) * 40ms + 300ms);
+  animation: letra-assenta 0.6s ease-out calc(var(--i) * 40ms + 300ms) backwards;
+}
+
+@keyframes letra-assenta {
+  from {
+    color: #fff4d6;
+    text-shadow: 0 0 14px rgb(240 207 134 / 0.8);
+  }
 }
 
 .time-cena[data-montagem="vazia"] .time-texto,
@@ -1563,9 +1906,41 @@ html.abertura .trilho {
   opacity: 0.15;
 }
 
+/* O Vigia varre a fileira da direita para a esquerda: cada agente aparece
+   quando a luz passa por ele. */
 .time-cena[data-montagem="agentes"] .agente-fileira {
   animation: agente-entra 0.45s ease-out backwards;
-  animation-delay: calc(var(--n) * 120ms);
+  animation-delay: calc((5 - var(--n)) * 120ms + 80ms);
+}
+
+.time-cena[data-montagem="agentes"] .fileira-agentes::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  bottom: -10px;
+  width: 70px;
+  border-left: 1.5px solid #f0cf86;
+  background: linear-gradient(to right, rgb(240 207 134 / 0.22), transparent);
+  box-shadow: -4px 0 14px -4px rgb(240 207 134 / 0.6);
+  pointer-events: none;
+  animation: varrer-fileira 0.95s ease-in-out forwards;
+}
+
+@keyframes varrer-fileira {
+  from {
+    left: 100%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    left: -70px;
+    opacity: 0;
+  }
 }
 
 .time-cena[data-montagem]:not([data-montagem="ficha"]) .painel-andar {
@@ -1579,7 +1954,7 @@ html.abertura .trilho {
 
 .time-cena[data-montagem="ficha"] .carimbo-conferido {
   display: block;
-  animation: carimbar 0.45s ease-out;
+  animation: carimbar 0.45s ease-out 0.4s backwards;
 }
 
 /* O contato */
@@ -1587,9 +1962,11 @@ html.abertura .trilho {
   opacity: 0;
 }
 
+/* Cada letra acende quando chega do livro do Escriba (Contato.tsx). */
 .contato[data-montagem="escrita"] .letra-escrita {
   transition: opacity 0s;
-  transition-delay: calc(var(--i) * 38ms);
+  transition-delay: calc(var(--i) * 38ms + 300ms);
+  animation: letra-assenta 0.6s ease-out calc(var(--i) * 38ms + 300ms) backwards;
 }
 
 .contato:is([data-montagem="vazia"], [data-montagem="escrita"]) .contato-texto {
@@ -1614,8 +1991,17 @@ html.abertura .trilho {
   outline-offset: -1px;
 }
 
-.contato[data-montagem="escrita"] .botao-email {
-  outline: 1px solid var(--acento);
+/* Cada botão ganha a cor quando o laser do Arquiteto termina de riscá-lo. */
+.contato[data-montagem="botoes"] .contato-botao {
+  transition-delay: 0.62s;
+}
+
+.contato[data-montagem="botoes"] .contato-botao:nth-child(2) {
+  transition-delay: 0.94s;
+}
+
+.contato[data-montagem="botoes"] .contato-botao:nth-child(3) {
+  transition-delay: 1.26s;
 }
 
 .contato:is([data-montagem="vazia"], [data-montagem="escrita"]) .roda-membro {
@@ -1630,6 +2016,8 @@ html.abertura .trilho {
   transition-delay: calc(var(--n) * 110ms);
 }
 
-.contato:is([data-montagem="vazia"], [data-montagem="escrita"], [data-montagem="botoes"]) .contato-mensageiro {
+/* O Mensageiro de verdade só aparece quando o que voa pousa com o envelope;
+   o balão vem junto. */
+.contato[data-montagem] .contato-mensageiro {
   opacity: 0;
 }
