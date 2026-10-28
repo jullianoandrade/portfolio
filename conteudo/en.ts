@@ -1048,7 +1048,8 @@ export const en: Conteudo = {
     time: {
       rotulo: "The team",
       titulo: ["Six agents,", "six rules of mine."],
-      texto: "Each one exists because I follow a rule. Hover to meet them.",
+      texto: "Each one exists because I follow a rule.",
+      dica: { mouse: "Hover to meet them.", toque: "Tap one to meet them." },
       montagem: { carimbo: "checked" },
       rotulos: { porQue: "Why it's here", onde: "Where it shows" },
       fichas: {

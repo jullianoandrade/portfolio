@@ -6,7 +6,7 @@ import { Familiar } from "@/components/abertura/Familiar";
 import { faiscador } from "@/components/faiscas";
 import type { Cenas, NomeFamiliar } from "@/conteudo/tipos";
 import { Letras } from "./Letras";
-import { pontoEm, useMontagem } from "./montagem";
+import { estreita, pontoEm, useMontagem } from "./montagem";
 import { ditarLetras, lancarEnvelope, riscarComLaser } from "./oficio";
 import { Voador, type Voo } from "./Voador";
 
@@ -78,7 +78,10 @@ export function Contato({
     (estado, el) => {
       const inicio = pontoEm(el, titulo.current, 0, 1, -24, 4);
       const fim = pontoEm(el, titulo.current, 1, 1, -24, 4);
-      const email = pontoEm(el, botaoEmail.current, 0, 0, -64, -4);
+      // No celular o e-mail ocupa a linha: ele risca de cima dele.
+      const email = estreita()
+        ? pontoEm(el, botaoEmail.current, 1, 0, -40, -58)
+        : pontoEm(el, botaoEmail.current, 0, 0, -64, -4);
       if (estado === "vazia" && inicio) setVoos([{ nome: "escriba", ...inicio }]);
       else if (estado === "escrita" && fim) {
         setVoos([{ nome: "escriba", ...fim, dur: ESCRITA }]);
@@ -150,7 +153,8 @@ export function Contato({
         </a>
 
         {/* o Mensageiro, esperando a carta */}
-        <div className="contato-mensageiro absolute top-full left-0 mt-5 hidden items-center gap-3 md:flex md:-translate-x-[55%]">
+        {/* No celular ele mora na linha de baixo dos botões, com o balão. */}
+        <div className="contato-mensageiro flex w-full items-center justify-center gap-3 md:absolute md:top-full md:left-0 md:mt-5 md:w-auto md:-translate-x-[55%]">
           <div className="balao balao-direita text-left">
             <span className="sr-only">{nomes.mensageiro}: </span>
             {textos.fala}
@@ -169,7 +173,7 @@ export function Contato({
         </div>
       </div>
 
-      <div ref={rodaRef} className="contato-roda mt-24 flex items-end gap-2.5 sm:gap-10" aria-hidden>
+      <div ref={rodaRef} className="contato-roda mt-16 flex items-end gap-2.5 sm:mt-24 sm:gap-10" aria-hidden>
         {roda.map((nome, n) => (
           <Membro key={nome} nome={nome} rotulo={nomes[nome]} n={n} letras={nome === "escriba" ? primeiroNome : undefined} />
         ))}

@@ -543,7 +543,10 @@ export function Pranchas({
     try {
       vista = Boolean(sessionStorage.getItem("montada-pranchas"));
     } catch {}
-    if (!svg || vista || movimentoReduzido() || matchMedia(ESTREITA).matches) return terminar();
+    if (!svg || vista || movimentoReduzido()) return terminar();
+    // No celular ele não voa pela cena: trabalha da doca, embaixo da prancha,
+    // e os feixes sobem dali.
+    const estreita = matchMedia(ESTREITA).matches;
     const vez: Vez = { parou: false };
     vezMontagem.current = vez;
     svg.classList.add("montando");
@@ -580,7 +583,7 @@ export function Pranchas({
       const ponta = (p: Ponto) => {
         const c = naCena(p);
         faiscar(r, c.x, c.y);
-        const f = fam.getBoundingClientRect();
+        const f = ((estreita && r.querySelector(".pr-doca .familiar")) || fam).getBoundingClientRect();
         linha.setAttribute("x1", String((f.left + f.width * 0.5 - c.q.left) / c.k));
         linha.setAttribute("y1", String((f.top + f.height * 0.28 - c.q.top) / c.k));
         linha.setAttribute("x2", String(p.x));

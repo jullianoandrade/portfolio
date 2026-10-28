@@ -6,7 +6,7 @@ import { Familiar } from "@/components/abertura/Familiar";
 import { FAMILIARES, type Cenas, type NomeFamiliar } from "@/conteudo/tipos";
 import { hashDoSistema } from "./endereco";
 import { Letras } from "./Letras";
-import { pontoEm, useMontagem } from "./montagem";
+import { estreita, pontoEm, useMontagem } from "./montagem";
 import { ditarLetras, riscarComLaser } from "./oficio";
 import { Voador, type Voo } from "./Voador";
 
@@ -59,13 +59,18 @@ export function Time({ textos, nomes }: { textos: Cenas["time"]; nomes: Record<N
         if (p) setVoo({ nome: "vigia", ...p });
       } else if (estado === "painel") {
         // No canto de baixo, fora da fileira: o feixe alcança o painel inteiro.
-        const p = pontoEm(el, painel.current, 1, 1, 18, -40);
+        // No celular não há lado: ele fica logo abaixo do painel.
+        const p = estreita()
+          ? pontoEm(el, painel.current, 0.5, 1, -24, 10)
+          : pontoEm(el, painel.current, 1, 1, 18, -40);
         if (p) setVoo({ nome: "arquiteto", ...p });
         relogios.current.push(
           setTimeout(() => painel.current && void riscarComLaser(el, painel.current, RISCO), 400),
         );
       } else if (estado === "ficha") {
-        const p = pontoEm(el, painel.current, 1, 0, -40, -70);
+        const p = estreita()
+          ? pontoEm(el, painel.current, 0, 0, 6, -34)
+          : pontoEm(el, painel.current, 1, 0, -40, -70);
         if (p) setVoo({ nome: "guardiao", ...p, gesto: "investir" });
       } else {
         relogios.current.forEach(clearTimeout);
@@ -77,8 +82,12 @@ export function Time({ textos, nomes }: { textos: Cenas["time"]; nomes: Record<N
   );
 
   return (
-    <div ref={raiz} className="time-cena relative grid items-center gap-12 lg:grid-cols-[minmax(0,27rem)_minmax(0,1fr)]">
-      <div>
+    <div
+      ref={raiz}
+      className="time-cena relative grid items-center lg:grid-cols-[minmax(0,27rem)_minmax(0,1fr)] lg:gap-12"
+    >
+      {/* No celular, a fileira vem antes do painel: é nela que se toca. */}
+      <div className="contents lg:block">
         <p className="rotulo !text-acento">{textos.rotulo}</p>
         <h2
           ref={titulo}
@@ -91,12 +100,15 @@ export function Time({ textos, nomes }: { textos: Cenas["time"]; nomes: Record<N
             </span>
           ))}
         </h2>
-        <p className="time-texto mt-6 max-w-[40ch] text-base leading-relaxed text-tinta-suave">{textos.texto}</p>
+        <p className="time-texto mt-6 max-w-[40ch] text-base leading-relaxed text-tinta-suave">
+          {textos.texto} <span className="dica-mouse">{textos.dica.mouse}</span>
+          <span className="dica-toque">{textos.dica.toque}</span>
+        </p>
 
         <div
           ref={painel}
           key={ativo}
-          className="painel-andar relative mt-8 border border-acento bg-fundo-elevado p-6 sm:p-7"
+          className="painel-andar relative order-3 mt-8 border border-acento bg-fundo-elevado p-6 sm:p-7 lg:order-none"
           aria-live="polite"
         >
           <span className="carimbo-conferido" aria-hidden>
@@ -121,7 +133,10 @@ export function Time({ textos, nomes }: { textos: Cenas["time"]; nomes: Record<N
         </div>
       </div>
 
-      <ul ref={fileira} className="fileira-agentes relative grid grid-cols-3 gap-x-4 gap-y-12 sm:grid-cols-6 sm:gap-x-2">
+      <ul
+        ref={fileira}
+        className="fileira-agentes relative order-2 mt-8 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-6 sm:gap-x-2 sm:gap-y-12 lg:order-none lg:mt-0"
+      >
         {FAMILIARES.map((nome, n) => {
           const eh = nome === ativo;
           return (
@@ -134,14 +149,14 @@ export function Time({ textos, nomes }: { textos: Cenas["time"]; nomes: Record<N
                 onClick={() => setAtivo(nome)}
                 className="group flex w-full flex-col items-center text-center"
               >
-                <span className="vaga-agente relative grid h-24 place-items-end">
+                <span className="vaga-agente relative grid h-16 place-items-end sm:h-24">
                   {eh && <span className="absolute bottom-0 left-1/2 h-3 w-20 -translate-x-1/2 rounded-[50%] bg-acento/20" />}
                   <span data-ativo={eh} className="agente-fileira block origin-bottom opacity-55 group-hover:opacity-90">
-                    <Familiar nome={nome} className={`size-14 ${eh ? "familiar-vivo" : ""}`} />
+                    <Familiar nome={nome} className={`size-11 sm:size-14 ${eh ? "familiar-vivo" : ""}`} />
                   </span>
                 </span>
                 <span
-                  className={`nome-agente mt-4 rounded-[3px] px-2 py-0.5 font-mono text-[11px] tracking-[0.14em] uppercase ${
+                  className={`nome-agente mt-3 rounded-[3px] px-2 py-0.5 font-mono text-[10px] tracking-[0.14em] uppercase sm:mt-4 sm:text-[11px] ${
                     eh ? "bg-acento text-fundo" : "text-tinta-suave"
                   }`}
                 >

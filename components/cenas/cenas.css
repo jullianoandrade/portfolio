@@ -873,6 +873,11 @@
     display: none;
   }
 
+  /* A prancha pequena no celular: o rótulo do nó maior, para dar para ler. */
+  .pr-mini .pr-no text {
+    font-size: 16.5px;
+  }
+
   .pr-doca {
     display: flex;
     width: 100%;
@@ -1072,9 +1077,10 @@
   }
 }
 
+/* No celular quem voa trabalha à vista, um pouco menor. */
 @media (max-width: 639px) {
   .voador {
-    display: none;
+    scale: 0.85;
   }
 }
 
@@ -1620,6 +1626,8 @@ html.abertura .trilho {
 
 .carta-corpo::before {
   content: "";
+  /* Só existe durante o laço: parado, passaria da borda da tela no celular. */
+  display: none;
   position: absolute;
   left: 70%;
   top: 50%;
@@ -1711,6 +1719,7 @@ html.abertura .trilho {
 }
 
 .mensageiro-carta:hover .carta-corpo::before {
+  display: block;
   animation: vento-vai 1s linear;
 }
 
@@ -1832,6 +1841,7 @@ html.abertura .trilho {
 }
 
 .contato:has(.contato-eu:hover) .carta-corpo::before {
+  display: block;
   animation: vento-vai 1s linear 0.9s backwards;
 }
 

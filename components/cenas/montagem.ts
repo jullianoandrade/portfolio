@@ -90,10 +90,18 @@ export function useMontagem<T extends HTMLElement>(
   return ref;
 }
 
-/** Um ponto de `alvo` em coordenadas de `raiz`: `fx`/`fy` são frações do alvo. */
+/**
+ * Um ponto de `alvo` em coordenadas de `raiz`: `fx`/`fy` são frações do alvo.
+ * O x fica dentro da raiz (o corpo de quem voa tem 48 px): na tela estreita,
+ * quem trabalharia ao lado do alvo trabalha na borda, à vista.
+ */
 export function pontoEm(raiz: Element, alvo: Element | null, fx: number, fy: number, dx = 0, dy = 0) {
   if (!alvo) return null;
   const r = raiz.getBoundingClientRect();
   const q = alvo.getBoundingClientRect();
-  return { x: q.left - r.left + q.width * fx + dx, y: q.top - r.top + q.height * fy + dy };
+  const x = q.left - r.left + q.width * fx + dx;
+  return { x: Math.min(Math.max(x, 0), r.width - 48), y: q.top - r.top + q.height * fy + dy };
 }
+
+/** A tela estreita do celular (a mesma das pranchas). */
+export const estreita = () => matchMedia("(max-width: 639px)").matches;

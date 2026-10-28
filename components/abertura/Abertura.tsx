@@ -585,15 +585,16 @@ export function Abertura({
     // O Mensageiro busca o primeiro card onde ele nasceu e o leva à vaga.
     const c0 = elemento('[data-cv="0"]')?.getBoundingClientRect();
     if (c0) voar("mensageiro", c0.right - 24, c0.top - 12, 1.05, 900);
+    // Se a vaga está abaixo da dobra (celular), ele leva o envelope para lá.
     depois(1000, () => {
       const v0 = vagas[0];
-      if (v0 && v0.top < innerHeight) entregar(0, v0);
+      if (v0) entregar(0, v0);
       else levarPara(0, v0, 1100);
     });
 
-    // O segundo espera encolhido na borda direita, ao lado do nome, até o
-    // Mensageiro voltar para ele na revisão. Se a vaga dele está abaixo da
-    // dobra (celular), ele já desce para lá.
+    // O segundo espera na borda direita até o Mensageiro voltar para ele na
+    // revisão: encolhido ao lado do nome ou, no celular, já fechado no
+    // envelope, que cabe ali sem cobrir nada.
     const c1 = elemento('[data-cv="1"]')?.getBoundingClientRect();
     if (c1 && vagas[1] && vagas[1].top < innerHeight) {
       // Encolhe pelo canto de cima à direita: a borda direita fica onde está.
@@ -604,17 +605,23 @@ export function Abertura({
         height: c1.height,
       };
       moverCard(1, r, 1000, 4, 0.6);
-    } else {
-      levarPara(1, vagas[1], 1000);
+    } else if (c1) {
+      elemento('[data-cv="1"]')?.setAttribute("data-envelope", "");
+      moverCard(
+        1,
+        { left: innerWidth - ENVELOPE.w - 18, top: innerHeight * 0.56, width: ENVELOPE.w, height: ENVELOPE.h },
+        900,
+        6,
+      );
     }
 
-    // O Triador desmonta o terceiro e o remonta na vaga que acende.
+    // O Triador desmonta o terceiro e o remonta na vaga que acende; se a
+    // vaga está abaixo da dobra, as linhas descem para lá já em colunas.
     const v2 = vagas[2];
-    if (!v2 || v2.top >= innerHeight) {
-      voar("triador", innerWidth - 42, bloco.bottom + 44, 1.05);
+    if (v2) ordenar(v2);
+    else {
+      voar("triador", innerWidth / 2, bloco.bottom + 44, 1.05);
       levarPara(2, v2, 1000);
-    } else {
-      ordenar(v2);
     }
   }, [depois, ditar, elemento, entregar, levarPara, moverCard, ordenar, puxarCaixa, voar]);
 
@@ -627,7 +634,7 @@ export function Abertura({
     if (c1) voar("mensageiro", c1.left + 20, c1.top - 12, 1.05, 500);
     depois(550, () => {
       const v1 = caixa('[data-vaga="1"]');
-      if (v1 && v1.top < innerHeight) entregar(1, v1);
+      if (v1) entregar(1, v1);
       else levarPara(1, v1, 1100);
     });
   }, [comentar, depois, elemento, entregar, levarPara, voar]);
@@ -635,6 +642,13 @@ export function Abertura({
   const prova = useCallback(() => {
     const v2 = caixa('[data-vaga="2"]');
     if (!v2) return;
+    // Com o card abaixo da dobra (celular), o Vigia aponta de baixo da tela,
+    // para onde as linhas desceram.
+    if (v2.top >= innerHeight - 40) {
+      elemento(".pino")?.style.setProperty("left", "-40px");
+      comentar('[data-c="vigia"]', new DOMRect(16, innerHeight - 70, innerWidth - 32, 1), true);
+      return;
+    }
     const pino = elemento(".pino");
     if (pino) {
       pino.style.left = `${v2.right - 14}px`;

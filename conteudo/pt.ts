@@ -1068,7 +1068,8 @@ export const pt: Conteudo = {
     time: {
       rotulo: "O time",
       titulo: ["Seis agentes,", "seis regras minhas."],
-      texto: "Cada um existe porque eu sigo uma regra. Passe o mouse para conhecer.",
+      texto: "Cada um existe porque eu sigo uma regra.",
+      dica: { mouse: "Passe o mouse para conhecer.", toque: "Toque em um para conhecer." },
       montagem: { carimbo: "conferido" },
       rotulos: { porQue: "Por que está aqui", onde: "Onde isso aparece" },
       fichas: {

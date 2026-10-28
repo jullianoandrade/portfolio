@@ -458,6 +458,8 @@ export interface Cenas {
     rotulo: string;
     titulo: [string, string];
     texto: string;
+    /** Como conhecer cada agente: passando o mouse ou tocando. */
+    dica: { mouse: string; toque: string };
     rotulos: { porQue: string; onde: string };
     fichas: Record<NomeFamiliar, FichaAgente>;
     /** O carimbo do Guardião na ficha, quando o time se monta na primeira chegada. */

@@ -288,3 +288,18 @@ html.vigia-ronda .pupila-vigia {
     animation: none;
   }
 }
+
+/* A dica de como conhecer os agentes: mouse ou toque, conforme a tela. */
+.dica-toque {
+  display: none;
+}
+
+@media (hover: none) {
+  .dica-mouse {
+    display: none;
+  }
+
+  .dica-toque {
+    display: inline;
+  }
+}

@@ -10,9 +10,9 @@ const RONDA_APOS = 2500;
 /**
  * O Vigia nunca para de olhar: em todo lugar onde ele aparece (o canto do
  * hero, o trilho, a roda do contato, a própria abertura), a pupila segue o
- * mouse. Parado o mouse, ou no toque, ele volta à ronda, olhando de um lado
- * ao outro (`html.vigia-ronda`, no CSS). Não desenha nada: só mexe nas
- * pupilas que o Familiar já tem.
+ * mouse, e no celular olha para onde você tocou. Parado, ele volta à ronda,
+ * olhando de um lado ao outro (`html.vigia-ronda`, no CSS). Não desenha
+ * nada: só mexe nas pupilas que o Familiar já tem.
  */
 export function OlharDoVigia() {
   useEffect(() => {
@@ -39,7 +39,8 @@ export function OlharDoVigia() {
     };
 
     const mover = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
+      // No toque não há "mover": ele olha para onde você tocou.
+      if (e.pointerType !== "mouse" && e.type === "pointermove") return;
       alvo = { x: e.clientX, y: e.clientY };
       html.classList.remove("vigia-ronda");
       clearTimeout(parado);
@@ -56,9 +57,11 @@ export function OlharDoVigia() {
     };
 
     addEventListener("pointermove", mover, { passive: true });
+    addEventListener("pointerdown", mover, { passive: true });
     addEventListener("scroll", rolar, { passive: true });
     return () => {
       removeEventListener("pointermove", mover);
+      removeEventListener("pointerdown", mover);
       removeEventListener("scroll", rolar);
       cancelAnimationFrame(quadro);
       clearTimeout(parado);
