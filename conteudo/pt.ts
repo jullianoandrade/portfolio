@@ -92,8 +92,8 @@ export const pt: Conteudo = {
       ],
       marcas: ["Re: o bot inventou preço de novo", "jurídico: posso mandar o contrato pro ChatGPT?", "funciona na demo, quebra em escala"],
       rotuloGargalo: "Gargalo",
-      rotuloPendencias: "Perguntas sem resposta",
-      rotuloProducao: "Sistemas em produção",
+      rotuloPendencias: ["Perguntas", "sem", "resposta"],
+      respondidas: "com",
       naoLidas: "não lidas",
       parado: "parado",
       familiares: {

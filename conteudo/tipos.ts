@@ -165,9 +165,13 @@ export interface Abertura {
    */
   marcas: [string, string, string];
   rotuloGargalo: string;
-  rotuloPendencias: string;
-  /** O contador depois do estalo: as 3 que ganharam resposta estão rodando. */
-  rotuloProducao: string;
+  /**
+   * O rótulo do contador em três pedaços: antes, a palavra que muda e depois
+   * ("Perguntas", "sem", "resposta"). No estalo só a palavra do meio rola
+   * para `respondidas` ("com"): as 3 que sobram são as que ganharam resposta.
+   */
+  rotuloPendencias: [string, string, string];
+  respondidas: string;
   /** A pilha do feed no celular: as que não couberam ("+2.942 não lidas"). */
   naoLidas: string;
   /** O contador, quando o tempo para. */

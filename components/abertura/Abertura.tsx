@@ -53,9 +53,9 @@ const ETAPAS = [
 ] as const;
 const DURACAO = 16300;
 
-/** Quando o rótulo do contador fica de lado no estalo (0.3s + metade de 0.6s, no CSS). */
+/** Quando, depois do estalo, o número chega a 3 e a palavra do rótulo termina de rolar (CSS). */
 const VIRADA = 600;
-/** Quanto o número leva para cair de 2.950 a 3, chegando junto com a virada. */
+/** Quanto o número leva para cair de 2.950 a 3. */
 const QUEDA = 520;
 
 /** Quanto a câmera fica em cada marca (igual ao `0.8s` do CSS). */
@@ -155,7 +155,6 @@ export function Abertura({
   const relogios = useRef<number[]>([]);
   const quadros = useRef<number[]>([]);
   const contador = useRef<HTMLSpanElement>(null);
-  const rotulo = useRef<HTMLSpanElement>(null);
 
   const depois = useCallback((ms: number, fazer: () => void) => {
     relogios.current.push(window.setTimeout(fazer, ms));
@@ -943,16 +942,14 @@ export function Abertura({
     const formato = new Intl.NumberFormat(idioma === "pt" ? "pt-BR" : "en-US");
     let pendencias = 2917;
     if (contador.current) contador.current.textContent = formato.format(pendencias);
-    if (rotulo.current) rotulo.current.textContent = textos.rotuloPendencias;
     const subir = window.setInterval(() => {
       pendencias += 1 + Math.floor(Math.random() * 3);
       if (contador.current) contador.current.textContent = formato.format(Math.min(pendencias, 2950));
     }, 50);
     depois(ETAPAS[0][1], () => clearInterval(subir));
     // No estalo, sobram só as três perguntas que ganham resposta agora: o
-    // número cai depressa até 3 enquanto o rótulo gira, e os dois chegam
-    // juntos — o rótulo troca de lado (metade do giro, igual ao CSS) para os
-    // sistemas que estão rodando.
+    // número cai depressa até 3 e, quando para, a palavra do rótulo termina
+    // de rolar de "sem" para "com" (no CSS).
     depois(ETAPAS[2][1] + VIRADA - QUEDA, () => {
       const inicio = performance.now();
       const cair = (agora: number) => {
@@ -962,9 +959,6 @@ export function Abertura({
         if (t < 1) quadros.current.push(requestAnimationFrame(cair));
       };
       quadros.current.push(requestAnimationFrame(cair));
-    });
-    depois(ETAPAS[2][1] + VIRADA, () => {
-      if (rotulo.current) rotulo.current.textContent = textos.rotuloProducao;
     });
 
     const aoEntrar: Partial<Record<(typeof ETAPAS)[number][0], () => void>> = {
@@ -994,8 +988,6 @@ export function Abertura({
     parar,
     prova,
     revisao,
-    textos.rotuloPendencias,
-    textos.rotuloProducao,
   ]);
 
   useEffect(() => {
@@ -1065,8 +1057,16 @@ export function Abertura({
         <span className="pendencias-numero" ref={contador}>
           {new Intl.NumberFormat(idioma === "pt" ? "pt-BR" : "en-US").format(2917)}
         </span>
-        <span className="pendencias-rotulo" ref={rotulo}>
-          {textos.rotuloPendencias}
+        <span className="pendencias-rotulo">
+          {textos.rotuloPendencias[0]}{" "}
+          {/* só a palavra que muda rola, como um contador */}
+          <span className="palavra-rola">
+            <span>
+              <span>{textos.rotuloPendencias[1]}</span>
+              <span>{textos.respondidas}</span>
+            </span>
+          </span>{" "}
+          {textos.rotuloPendencias[2]}
         </span>
       </div>
 
