@@ -619,7 +619,7 @@ html.abertura.e-para .pendencias-estado .congelado {
   text-transform: uppercase;
 }
 
-/* No estalo o rótulo vira 180° no próprio eixo, como uma plaquinha: de lado,
+/* No estalo o rótulo gira 180° na horizontal, no próprio eixo: de lado,
    na metade, Abertura.tsx troca o texto (VIRADA), e ele termina de virar já
    mostrando o novo, sem espelhar. */
 html.abertura.e-estalo .pendencias-rotulo {
@@ -629,16 +629,16 @@ html.abertura.e-estalo .pendencias-rotulo {
 
 @keyframes rotulo-vira {
   0% {
-    transform: perspective(300px) rotateX(0deg);
+    transform: perspective(600px) rotateY(0deg);
   }
   50% {
-    transform: perspective(300px) rotateX(90deg);
+    transform: perspective(600px) rotateY(90deg);
   }
   50.01% {
-    transform: perspective(300px) rotateX(-90deg);
+    transform: perspective(600px) rotateY(-90deg);
   }
   100% {
-    transform: perspective(300px) rotateX(0deg);
+    transform: perspective(600px) rotateY(0deg);
   }
 }
 
