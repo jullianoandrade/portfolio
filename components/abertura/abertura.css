@@ -579,7 +579,8 @@ html.abertura.e-estalo .olhares line {
 .pendencias {
   position: absolute;
   right: 4vw;
-  bottom: 6vh;
+  /* Sempre acima do "pular · esc", que fica a 16px do pé da tela. */
+  bottom: max(6vh, 76px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
