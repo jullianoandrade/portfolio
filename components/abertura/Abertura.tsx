@@ -53,8 +53,10 @@ const ETAPAS = [
 ] as const;
 const DURACAO = 16300;
 
-/** Quando o número e o rótulo do contador ficam de lado no estalo (0.3s + metade de 0.6s, no CSS). */
+/** Quando o rótulo do contador fica de lado no estalo (0.3s + metade de 0.6s, no CSS). */
 const VIRADA = 600;
+/** Quanto o número leva para cair de 2.950 a 3, chegando junto com a virada. */
+const QUEDA = 520;
 
 /** Quanto a câmera fica em cada marca (igual ao `0.8s` do CSS). */
 const PASSO_MARCA = 800;
@@ -948,10 +950,20 @@ export function Abertura({
     }, 50);
     depois(ETAPAS[0][1], () => clearInterval(subir));
     // No estalo, sobram só as três perguntas que ganham resposta agora: o
-    // número e o rótulo giram juntos no próprio eixo e, de lado (metade do
-    // giro, igual ao CSS), trocam para os sistemas que estão rodando.
+    // número cai depressa até 3 enquanto o rótulo gira, e os dois chegam
+    // juntos — o rótulo troca de lado (metade do giro, igual ao CSS) para os
+    // sistemas que estão rodando.
+    depois(ETAPAS[2][1] + VIRADA - QUEDA, () => {
+      const inicio = performance.now();
+      const cair = (agora: number) => {
+        const t = Math.min((agora - inicio) / QUEDA, 1);
+        const k = 1 - (1 - t) ** 3;
+        if (contador.current) contador.current.textContent = formato.format(Math.round(2950 - (2950 - 3) * k));
+        if (t < 1) quadros.current.push(requestAnimationFrame(cair));
+      };
+      quadros.current.push(requestAnimationFrame(cair));
+    });
     depois(ETAPAS[2][1] + VIRADA, () => {
-      if (contador.current) contador.current.textContent = "3";
       if (rotulo.current) rotulo.current.textContent = textos.rotuloProducao;
     });
 
