@@ -658,7 +658,9 @@ export function Abertura({
           width: `${numero.width}px`,
           height: `${numero.height}px`,
         });
-      comentar('[data-c="vigia"]', numero);
+      // Acima do número, sobre a frase já riscada: embaixo é onde o
+      // Mensageiro e o Triador vão trabalhar.
+      comentar('[data-c="vigia"]', numero, true);
     }
     depois(1150, () => {
       aFila("vigia");
