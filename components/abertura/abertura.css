@@ -612,10 +612,34 @@ html.abertura.e-para .pendencias-estado .congelado {
 }
 
 .pendencias-rotulo {
+  display: inline-block;
   color: var(--tinta-fraca);
   font-size: 11px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+/* No estalo o rótulo vira 180° no próprio eixo, como uma plaquinha: de lado,
+   na metade, Abertura.tsx troca o texto (VIRADA), e ele termina de virar já
+   mostrando o novo, sem espelhar. */
+html.abertura.e-estalo .pendencias-rotulo {
+  color: var(--acento);
+  animation: rotulo-vira 0.6s ease-in-out 0.3s;
+}
+
+@keyframes rotulo-vira {
+  0% {
+    transform: perspective(300px) rotateX(0deg);
+  }
+  50% {
+    transform: perspective(300px) rotateX(90deg);
+  }
+  50.01% {
+    transform: perspective(300px) rotateX(-90deg);
+  }
+  100% {
+    transform: perspective(300px) rotateX(0deg);
+  }
 }
 
 html.abertura.e-para .pendencias {
@@ -635,8 +659,10 @@ html.abertura.e-estalo .pendencias-estado {
   visibility: hidden;
 }
 
+/* Some depois de dar tempo de ler "sistemas em produção". */
 html.abertura.e-time .pendencias {
   opacity: 0;
+  transition-delay: 1s;
 }
 
 /* --- as respostas: o card de cada caso, nascendo de uma marca */
@@ -1500,7 +1526,10 @@ html.abertura.e-fim .pino {
     animation: feed-entra 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
   }
 
+  /* A animação de entrada prende a opacidade e a posição: sai no estalo
+     para a pilha poder ser varrida com o feed. */
   html.abertura.e-estalo .feed-pilha {
+    animation: none;
     translate: 110vw 0;
     transition-delay: 0.62s;
   }

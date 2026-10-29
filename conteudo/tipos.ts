@@ -166,6 +166,8 @@ export interface Abertura {
   marcas: [string, string, string];
   rotuloGargalo: string;
   rotuloPendencias: string;
+  /** O contador depois do estalo: as 3 que ganharam resposta estão rodando. */
+  rotuloProducao: string;
   /** A pilha do feed no celular: as que não couberam ("+2.942 não lidas"). */
   naoLidas: string;
   /** O contador, quando o tempo para. */

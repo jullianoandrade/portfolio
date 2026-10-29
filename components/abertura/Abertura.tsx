@@ -53,6 +53,9 @@ const ETAPAS = [
 ] as const;
 const DURACAO = 16300;
 
+/** Quando o rótulo do contador fica de lado no estalo (0.3s + metade de 0.6s, no CSS). */
+const VIRADA = 600;
+
 /** Quanto a câmera fica em cada marca (igual ao `0.8s` do CSS). */
 const PASSO_MARCA = 800;
 
@@ -150,6 +153,7 @@ export function Abertura({
   const relogios = useRef<number[]>([]);
   const quadros = useRef<number[]>([]);
   const contador = useRef<HTMLSpanElement>(null);
+  const rotulo = useRef<HTMLSpanElement>(null);
 
   const depois = useCallback((ms: number, fazer: () => void) => {
     relogios.current.push(window.setTimeout(fazer, ms));
@@ -382,10 +386,11 @@ export function Abertura({
     });
     const largura = Math.min(300, innerWidth * 0.62);
     const altura = Math.min(150, largura * 0.6);
-    // No celular os três cards se empilham no topo, como no layout da página.
+    // No celular os três cards se empilham logo abaixo do contador, como no
+    // layout da página.
     const pilha = (i: number) =>
       celular()
-        ? { left: 12, top: innerHeight * 0.15 + i * 110, width: innerWidth - 24, height: 100 }
+        ? { left: 12, top: 160 + i * 110, width: innerWidth - 24, height: 100 }
         : null;
     // As dores são medidas depois do recuo, já no plano geral.
     depois(360, () => {
@@ -936,14 +941,20 @@ export function Abertura({
     const formato = new Intl.NumberFormat(idioma === "pt" ? "pt-BR" : "en-US");
     let pendencias = 2917;
     if (contador.current) contador.current.textContent = formato.format(pendencias);
+    if (rotulo.current) rotulo.current.textContent = textos.rotuloPendencias;
     const subir = window.setInterval(() => {
       pendencias += 1 + Math.floor(Math.random() * 3);
       if (contador.current) contador.current.textContent = formato.format(Math.min(pendencias, 2950));
     }, 50);
     depois(ETAPAS[0][1], () => clearInterval(subir));
-    // No estalo, sobram só as três perguntas que ganham resposta agora.
+    // No estalo, sobram só as três perguntas que ganham resposta agora: o
+    // rótulo vira no próprio eixo e, de lado (metade do giro, igual ao CSS),
+    // troca para os sistemas que estão rodando.
     depois(ETAPAS[2][1] + 300, () => {
       if (contador.current) contador.current.textContent = "3";
+    });
+    depois(ETAPAS[2][1] + VIRADA, () => {
+      if (rotulo.current) rotulo.current.textContent = textos.rotuloProducao;
     });
 
     const aoEntrar: Partial<Record<(typeof ETAPAS)[number][0], () => void>> = {
@@ -961,7 +972,21 @@ export function Abertura({
       });
     }
     depois(DURACAO, finalizar);
-  }, [depois, estalo, fim, finalizar, idioma, limpar, marcar, obra, parar, prova, revisao]);
+  }, [
+    depois,
+    estalo,
+    fim,
+    finalizar,
+    idioma,
+    limpar,
+    marcar,
+    obra,
+    parar,
+    prova,
+    revisao,
+    textos.rotuloPendencias,
+    textos.rotuloProducao,
+  ]);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -1030,7 +1055,9 @@ export function Abertura({
         <span className="pendencias-numero" ref={contador}>
           {new Intl.NumberFormat(idioma === "pt" ? "pt-BR" : "en-US").format(2917)}
         </span>
-        <span className="pendencias-rotulo">{textos.rotuloPendencias}</span>
+        <span className="pendencias-rotulo" ref={rotulo}>
+          {textos.rotuloPendencias}
+        </span>
       </div>
 
       {/* --------------------------- as respostas: os cards que voam */}
