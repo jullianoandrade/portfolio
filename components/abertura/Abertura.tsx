@@ -53,7 +53,7 @@ const ETAPAS = [
 ] as const;
 const DURACAO = 16300;
 
-/** Quando o rótulo do contador fica de lado no estalo (0.3s + metade de 0.6s, no CSS). */
+/** Quando o número e o rótulo do contador ficam de lado no estalo (0.3s + metade de 0.6s, no CSS). */
 const VIRADA = 600;
 
 /** Quanto a câmera fica em cada marca (igual ao `0.8s` do CSS). */
@@ -948,12 +948,10 @@ export function Abertura({
     }, 50);
     depois(ETAPAS[0][1], () => clearInterval(subir));
     // No estalo, sobram só as três perguntas que ganham resposta agora: o
-    // rótulo vira no próprio eixo e, de lado (metade do giro, igual ao CSS),
-    // troca para os sistemas que estão rodando.
-    depois(ETAPAS[2][1] + 300, () => {
-      if (contador.current) contador.current.textContent = "3";
-    });
+    // número e o rótulo giram juntos no próprio eixo e, de lado (metade do
+    // giro, igual ao CSS), trocam para os sistemas que estão rodando.
     depois(ETAPAS[2][1] + VIRADA, () => {
+      if (contador.current) contador.current.textContent = "3";
       if (rotulo.current) rotulo.current.textContent = textos.rotuloProducao;
     });
 

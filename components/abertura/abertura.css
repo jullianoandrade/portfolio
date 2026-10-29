@@ -619,11 +619,16 @@ html.abertura.e-para .pendencias-estado .congelado {
   text-transform: uppercase;
 }
 
-/* No estalo o rótulo gira 180° na horizontal, no próprio eixo: de lado,
+/* No estalo o rótulo (e o número) gira 180° na horizontal, no próprio eixo: de lado,
    na metade, Abertura.tsx troca o texto (VIRADA), e ele termina de virar já
    mostrando o novo, sem espelhar. */
 html.abertura.e-estalo .pendencias-rotulo {
   color: var(--acento);
+  animation: rotulo-vira 0.6s ease-in-out 0.3s;
+}
+
+/* O número gira junto e troca no mesmo instante. */
+html.abertura.e-estalo .pendencias-numero {
   animation: rotulo-vira 0.6s ease-in-out 0.3s;
 }
 
