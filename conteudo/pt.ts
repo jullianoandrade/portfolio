@@ -93,6 +93,7 @@ export const pt: Conteudo = {
       marcas: ["Re: o bot inventou preço de novo", "jurídico: posso mandar o contrato pro ChatGPT?", "funciona na demo, quebra em escala"],
       rotuloGargalo: "Gargalo",
       rotuloPendencias: "Perguntas sem resposta",
+      naoLidas: "não lidas",
       parado: "parado",
       familiares: {
         escriba: "Escriba",

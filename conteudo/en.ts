@@ -91,6 +91,7 @@ export const en: Conteudo = {
       marcas: ["Re: the bot made up a price again", "legal: can I send the contract to ChatGPT?", "works in the demo, breaks at scale"],
       rotuloGargalo: "Bottleneck",
       rotuloPendencias: "Unanswered questions",
+      naoLidas: "unread",
       parado: "frozen",
       familiares: {
         escriba: "Scribe",

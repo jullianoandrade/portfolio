@@ -328,6 +328,43 @@ html.abertura.e-fim .cartao {
   text-overflow: ellipsis;
 }
 
+/* A poeira: pedaços que o cartão solta pelo rastro, de trás, enquanto corre.
+   Congela com o tempo; no estalo, Abertura.tsx a puxa até a mão dele. */
+.lasca {
+  position: absolute;
+  left: 2px;
+  top: calc(22% + var(--j) * 28%);
+  width: 3.5px;
+  height: 3.5px;
+  background: var(--tinta);
+  opacity: 0;
+  pointer-events: none;
+  animation: lasca 1s linear infinite;
+  animation-delay: calc(var(--i) * -0.17s + var(--j) * -0.33s);
+}
+
+@keyframes lasca {
+  0% {
+    opacity: 0.9;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: -70px calc(var(--j) * 10px - 8px);
+  }
+}
+
+/* No estalo, cada pedaço vira uma fagulha a caminho da mão dele. */
+.lasca-solta {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--acento-forte);
+  box-shadow: 0 0 6px 1px rgb(240 207 134 / 0.7);
+  pointer-events: none;
+}
+
 @keyframes frag-entra {
   from {
     opacity: 0;
@@ -346,10 +383,71 @@ html.abertura.e-fim .cartao {
   }
 }
 
+/* A pilha das notificações que não couberam no feed do celular, sempre
+   recebendo mais. No computador ela não aparece. */
+.pilha {
+  display: grid;
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease,
+    translate 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Três pílulas recolhidas, cada uma mais estreita e apagada; a da frente
+   pulsa como quem recebe mais uma, e as de trás vão atrás. */
+.pilha i {
+  display: grid;
+  place-items: center;
+  width: calc(100% - var(--k) * 8%);
+  height: 30px;
+  margin-top: calc(var(--k) * -23px);
+  border: 1px solid var(--regua-forte);
+  border-radius: 10px;
+  background: var(--fundo-elevado);
+  color: var(--tinta-fraca);
+  font-size: 10.5px;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.45);
+  opacity: calc(0.9 - var(--k) * 0.25);
+  z-index: calc(3 - var(--k));
+  animation: pilha-recebe 0.55s ease-in-out infinite;
+  animation-delay: calc(var(--k) * 70ms);
+}
+
+@keyframes pilha-recebe {
+  40% {
+    translate: 0 3px;
+  }
+}
+
+.feed-pilha {
+  display: none;
+}
+
+html.abertura.e-para .pilha i {
+  animation-play-state: paused;
+}
+
+html.abertura.e-para .pilha {
+  filter: grayscale(0.9) brightness(0.72);
+}
+
+html.abertura.e-marca .pilha {
+  opacity: 0.45;
+}
+
+html.abertura.e-estalo .pilha {
+  opacity: 0;
+  translate: 40vw 0;
+  transition-delay: 0.3s;
+}
+
 /* --- o tempo para */
 
 html.abertura.e-para .frag-cartao,
-html.abertura.e-para .poeira {
+html.abertura.e-para .lasca {
   animation-play-state: paused;
 }
 
@@ -476,30 +574,6 @@ html.abertura.e-marca .olhares line {
 html.abertura.e-estalo .olhares line {
   opacity: 0;
   transition-delay: 0s;
-}
-
-/* Poeira: anda junto com o caos e fica suspensa quando o tempo para. */
-.poeira {
-  position: absolute;
-  left: calc(28% + var(--k) * 4.6%);
-  top: calc(58% + mod(var(--k) * 7, 13) * 1.2%);
-  width: 3px;
-  height: 3px;
-  background: var(--tinta-suave);
-  opacity: 0.45;
-  animation: poeira 1.3s linear infinite;
-  animation-delay: calc(var(--k) * -0.13s);
-}
-
-@keyframes poeira {
-  to {
-    translate: 46px -18px;
-  }
-}
-
-html.abertura.e-estalo .poeira {
-  opacity: 0;
-  transition: opacity 0.3s ease 0.3s;
 }
 
 .pendencias {
@@ -795,9 +869,10 @@ html.abertura.e-para .onda-tempo {
   transition: opacity 0.3s ease;
 }
 
+/* As faíscas acendem na mão dele, quando a poeira chega, e saem voando. */
 html.abertura.e-estalo .faisca {
   opacity: 1;
-  transition-delay: calc(0.6s + var(--n) * 0.06s);
+  transition-delay: calc(0.72s + var(--n) * 0.05s);
 }
 
 html.abertura.e-time .faisca {
@@ -1309,7 +1384,8 @@ html.abertura.e-fim .pino {
     animation-delay: calc(var(--fm) * 110ms), calc(var(--fm) * 110ms + 0.32s);
   }
 
-  .frag-cartao::before {
+  .frag-cartao::before,
+  .lasca {
     display: none;
   }
 
@@ -1412,8 +1488,20 @@ html.abertura.e-fim .pino {
     animation: none;
   }
 
-  .poeira {
-    left: calc(8% + var(--k) * 8%);
+  .feed-pilha {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: calc(140px + 8 * 44px - 4px);
+    display: grid;
+    justify-items: center;
+    opacity: 0;
+    animation: feed-entra 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+  }
+
+  html.abertura.e-estalo .feed-pilha {
+    translate: 110vw 0;
+    transition-delay: 0.62s;
   }
 
   .cartao-voo {

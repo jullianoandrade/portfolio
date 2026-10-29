@@ -16,7 +16,9 @@ import "./abertura.css";
  *   marca    o olhar dele prende uma moldura em três dores, uma por vez,
  *            e a câmera aproxima de cada uma
  *   estalo   ele estala: a câmera recua seca, o tempo volta, o resto é varrido, e cada dor
- *            marcada se desdobra no card do caso que a resolve
+ *            marcada se desdobra no card do caso que a resolve; a poeira que
+ *            os cartões soltavam é puxada até a mão dele e sai dali em seis
+ *            faíscas
  *   time     as faíscas viram os seis agentes
  *   obra     a cena some e o time monta a página real, cada um do seu
  *            jeito: o Arquiteto puxa a caixa do nome com o laser, o Escriba
@@ -154,6 +156,17 @@ export function Abertura({
   }, []);
 
   const elemento = useCallback((seletor: string) => cena.current?.querySelector<HTMLElement>(seletor) ?? null, []);
+
+  /**
+   * A pilha das notificações que não couberam na tela, sempre recebendo
+   * mais: três pílulas recolhidas, e na da frente quantas são.
+   */
+  const pilha = (fora: number) =>
+    [0, 1, 2].map((k) => (
+      <i key={k} style={{ "--k": k } as React.CSSProperties}>
+        {k === 0 && `+${new Intl.NumberFormat(idioma === "pt" ? "pt-BR" : "en-US").format(fora)} ${textos.naoLidas}`}
+      </i>
+    ));
 
   /**
    * O vento atrás do Mensageiro enquanto ele leva um card: linhas na direção
@@ -319,6 +332,54 @@ export function Abertura({
    */
   const estalo = useCallback(() => {
     focar(null);
+    // A poeira que os cartões soltavam é puxada até a mão dele, e dela saem
+    // as seis faíscas que viram o time. Mede depois do recuo da câmera.
+    depois(360, () => {
+      const palco = cena.current;
+      const ele = elemento(".cena-juliano")?.getBoundingClientRect();
+      if (!palco || !ele) return;
+      const mao = { x: ele.left + ele.width * 0.248, y: ele.top + ele.height * 0.127 };
+      palco.querySelectorAll<HTMLElement>(".lasca").forEach((lasca, k) => {
+        const r = lasca.getBoundingClientRect();
+        if (!r.width || Number(getComputedStyle(lasca).opacity) < 0.1) return;
+        const solta = document.createElement("i");
+        solta.className = "lasca-solta";
+        Object.assign(solta.style, { left: `${r.left}px`, top: `${r.top}px` });
+        palco.append(solta);
+        solta
+          .animate(
+            [
+              { transform: "none", opacity: 0.8 },
+              { transform: `translate(${mao.x - r.left}px, ${mao.y - r.top}px) scale(0.6)`, opacity: 1 },
+            ],
+            { duration: 340, delay: (k % 8) * 22, easing: "cubic-bezier(0.55, 0, 0.8, 0.2)", fill: "forwards" },
+          )
+          .finished.then(
+            () => solta.remove(),
+            () => solta.remove(),
+          );
+      });
+      depois(360, () =>
+        FAMILIARES.forEach((nome, n) => {
+          const el = elemento(`[data-voo="${nome}"]`);
+          if (!el) return;
+          el.style.setProperty("--dur", "0ms");
+          el.style.left = `${mao.x}px`;
+          el.style.top = `${mao.y}px`;
+          const [px, py, pxm, pym] = POSICOES[nome];
+          const [x, y] = celular() ? [pxm, pym] : [px, py];
+          quadros.current.push(
+            requestAnimationFrame(() =>
+              quadros.current.push(
+                requestAnimationFrame(() =>
+                  voar(nome, (innerWidth * x) / 100, (innerHeight * y) / 100, celular() ? NA_FILA : 1.4, 450 + n * 60),
+                ),
+              ),
+            ),
+          );
+        }),
+      );
+    });
     const largura = Math.min(300, innerWidth * 0.62);
     const altura = Math.min(150, largura * 0.6);
     // No celular os três cards se empilham no topo, como no layout da página.
@@ -348,7 +409,7 @@ export function Abertura({
         );
       }
     });
-  }, [depois, elemento, focar, moverCard]);
+  }, [depois, elemento, focar, moverCard, voar]);
 
   /**
    * O Escriba passa por baixo do nome, letra por letra, e cada uma sai do
@@ -845,7 +906,7 @@ export function Abertura({
       el.removeAttribute("data-ativo");
     });
     elemento(".laser-nome")?.removeAttribute("data-on");
-    cena.current?.querySelectorAll(".faisca-voa, .letra-voa, .linha-dado").forEach((f) => f.remove());
+    cena.current?.querySelectorAll(".faisca-voa, .letra-voa, .linha-dado, .lasca-solta").forEach((f) => f.remove());
     document.querySelectorAll("[data-chegou]").forEach((el) => el.removeAttribute("data-chegou"));
     mundo.current?.removeAttribute("style");
     for (const p of ["left", "bottom"]) elemento(".cena-juliano")?.style.removeProperty(p);
@@ -942,10 +1003,8 @@ export function Abertura({
           </Fragmento>
         ))}
 
-        {/* poeira: anda com o caos e congela com o tempo */}
-        {Array.from({ length: 10 }, (_, k) => (
-          <span key={k} className="poeira" style={{ "--k": k } as React.CSSProperties} />
-        ))}
+        {/* no celular, a pilha das que não couberam no feed (8 à vista) */}
+        <div className="pilha feed-pilha">{pilha(2950 - 8)}</div>
 
         {/* --------------------------------------------------- o olhar */}
         <svg className="olhares">
@@ -1077,6 +1136,10 @@ function Fragmento({
         )}
         <span className="frag-icone" />
         <span className="frag-texto">{children}</span>
+        {/* a poeira: pedaços que o cartão solta pelo rastro enquanto corre */}
+        {[0, 1, 2].map((j) => (
+          <i key={j} className="lasca" style={{ "--j": j } as React.CSSProperties} />
+        ))}
       </div>
       {marca !== undefined && <span className="rotulo-gargalo">{rotulo}</span>}
     </div>
