@@ -30,10 +30,10 @@ export const pt: Conteudo = {
           "Primeiro profissional de automação da empresa. Estruturei a área, e hoje construo agentes e sistemas de IA além de mentorar o time.",
       },
       {
-        periodo: "2023 — hoje",
+        periodo: "2024 — 2028",
         cargo: "Ciência da Computação",
         organizacao: "Unisinos",
-        descricao: "Graduação em andamento.",
+        descricao: "Graduação em andamento, iniciada na La Salle e transferida para a Unisinos. Conclusão prevista em 2028.",
       },
     ],
     email: "juliano.andrade.cs@gmail.com",

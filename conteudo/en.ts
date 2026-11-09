@@ -28,10 +28,10 @@ export const en: Conteudo = {
           "First automation engineer at the company. Built the practice, and today I build agents and AI systems while mentoring the team.",
       },
       {
-        periodo: "2023 — present",
+        periodo: "2024 — 2028",
         cargo: "BSc Computer Science",
         organizacao: "Unisinos",
-        descricao: "In progress.",
+        descricao: "In progress. Started at La Salle University, transferred to Unisinos. Expected 2028.",
       },
     ],
     email: "juliano.andrade.cs@gmail.com",
