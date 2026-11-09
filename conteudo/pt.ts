@@ -580,7 +580,7 @@ export const pt: Conteudo = {
           porTras: [
             "Equipes inteiras saíram do trabalho operacional.",
             "Colunar e fora da memória, em vez de linha a linha: 16 mi de linhas no hardware do escritório.",
-            "Fui o primeiro profissional da área; a equipe que formei hoje atende outros setores.",
+            "Fui o primeiro profissional da área; integrei os colegas que vieram depois, e hoje a área atende outros setores.",
           ],
           nos: {
             portais: { rotulo: "portais", sub: "sem API" },

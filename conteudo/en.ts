@@ -569,7 +569,7 @@ export const en: Conteudo = {
           porTras: [
             "Whole teams moved off purely operational work.",
             "Columnar and out of memory, instead of row by row: 16M rows on office hardware.",
-            "I was the first person in the area; the team I trained now serves other departments.",
+            "I was the first person in the area; I onboarded the colleagues who came after, and the area now serves other departments.",
           ],
           nos: {
             portais: { rotulo: "portals", sub: "no API" },
