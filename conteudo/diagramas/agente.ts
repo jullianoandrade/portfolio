@@ -31,7 +31,7 @@ export interface Diagrama {
   arestas: ArestaGeometria[];
 }
 
-export const AGENTE: Diagrama = {
+const AGENTE: Diagrama = {
   viewBox: "0 0 720 500",
   larguraMinima: 640,
   no: { largura: 168, altura: 54 },
