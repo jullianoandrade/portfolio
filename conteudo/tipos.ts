@@ -73,8 +73,6 @@ export interface Caso {
   dominio: string;
   periodo: string;
   papel: Papel;
-  /** Verdadeiro só para o carro-chefe. */
-  destaque: boolean;
   /**
    * Trabalho sob confidencialidade: renderiza a nota de que o caso descreve
    * arquitetura e decisões sem expor código, credenciais, clientes ou dados.
@@ -89,49 +87,12 @@ export interface Caso {
   aprendizado: string;
   stack: string[];
   links?: Link[];
-  vitrine: Vitrine;
-}
-
-/** Para quem o sistema foi feito. A etiqueta da bancada e do prédio. */
-export type Etiqueta = "interno" | "clientes" | "proprio";
-
-/**
- * A versão curta do caso que a bancada da home mostra ao lado do sistema
- * funcionando. O caso inteiro continua na página dele.
- */
-export interface Vitrine {
-  etiqueta: Etiqueta;
-  /** O que vem depois da etiqueta: "Equipe jurídica", "3 empresas, mesma arquitetura". */
-  detalhe: string;
-  /** Nome na régua da bancada. */
-  curto: string;
-  gargalo: string;
-  resultado: string;
-}
-
-/** Eixo de organização da home: capacidade, não domínio. */
-export interface Capacidade {
-  id: string;
-  titulo: string;
-  descricao: string;
-  /** slugs de casos que a demonstram */
-  casos: string[];
-}
-
-export interface Trajetoria {
-  periodo: string;
-  cargo: string;
-  organizacao: string;
-  descricao: string;
 }
 
 export interface Perfil {
   nome: string;
   titulo: string;
   localizacao: string;
-  /** O arco da narrativa, um parágrafo por movimento. */
-  arco: string[];
-  trajetoria: Trajetoria[];
   email: string;
   linkedin: string;
   github: string;
@@ -196,7 +157,6 @@ export interface Abertura {
 /** Strings de interface — tudo que não é conteúdo de caso. */
 export interface Interface {
   navegacao: {
-    passei: string;
     casos: string;
     time: string;
     contato: string;
@@ -209,7 +169,6 @@ export interface Interface {
    */
   heroAmplitude: (sistemas: number, dominios: string[]) => string;
   heroSubtitulo: string;
-  verCaso: string;
   voltar: string;
   rotulos: {
     papel: string;
@@ -220,8 +179,6 @@ export interface Interface {
     resultado: string;
     aprendizado: string;
     stack: string;
-    dominio: string;
-    periodo: string;
     escolha: string;
     descartado: string;
     custo: string;
@@ -241,7 +198,6 @@ export interface Conteudo {
   idioma: Idioma;
   perfil: Perfil;
   interface: Interface;
-  capacidades: Capacidade[];
   casos: Caso[];
   cenas: Cenas;
 }
@@ -250,32 +206,6 @@ export interface Conteudo {
    As cenas da home, depois da abertura. Tudo aqui vai para componentes
    de cliente, então nada de função: só texto e dados.
    ============================================================ */
-
-/** Um andar do prédio: um setor da empresa por onde ele passou. */
-export interface Setor {
-  id: string;
-  nome: string;
-  marco?: "inicio" | "hoje";
-  /** O que ele construiu ali; `caso` leva à bancada quando existe caso. */
-  sistemas: { nome: string; caso?: string }[];
-  titulo: string;
-  descricao: string;
-  /** Só quando foi confirmada — andar sem etiqueta não ganha uma por suposição. */
-  etiqueta?: Etiqueta;
-  /** Só resultado real, informado por ele. */
-  resultados: { valor: string; rotulo: string }[];
-  /** O que o Mensageiro diz ao chegar no andar. */
-  fala: string;
-  /** Quem trabalha naquele andar, desenhado no canto. */
-  agente?: NomeFamiliar;
-}
-
-/** Um projeto feito por conta própria, fora do Grupo Studio. */
-export interface ProjetoProprio {
-  sistema: string;
-  caso: string;
-  nota: string;
-}
 
 /**
  * O que acontece quando a execução de uma prancha chega num nó: a linha do
@@ -324,22 +254,6 @@ export interface Prancha {
   cenarios: CenarioPrancha[];
 }
 
-/**
- * Uma conversa fictícia que o visitante manda ao agente. `caminho` são os
- * nós do grafo real, na ordem em que a mensagem passa por eles.
- */
-export interface Simulacao {
-  pergunta: string;
-  caminho: string[];
-  resposta: string;
-  /** Dado que um nó trouxe de fora (agenda, briefing), mostrado junto dele. */
-  dados?: { no: string; texto: string }[];
-  /** Rascunho que o guard barra; quando existe, o guard acende em vermelho. */
-  barrado?: string;
-  anfitriao: NomeFamiliar;
-  fala: [string, string];
-}
-
 /** A ficha de cada agente na cena do time. */
 export interface FichaAgente {
   regra: string;
@@ -348,22 +262,7 @@ export interface FichaAgente {
 }
 
 export interface Cenas {
-  trilho: { inicio: string; passei: string; casos: string; time: string; contato: string };
-  passei: {
-    rotulo: string;
-    /** A empresa e o período: o prédio é ela. */
-    empresa: string;
-    titulo: [string, string];
-    texto: string;
-    marcos: { inicio: string; hoje: string };
-    etiquetas: Record<Etiqueta, string>;
-    convite: string;
-    /** De baixo para cima: a ordem em que ele passou. */
-    setores: Setor[];
-    /** Logo abaixo do prédio, o que ele construiu por conta própria. */
-    porConta: string;
-    proprios: ProjetoProprio[];
-  };
+  trilho: { inicio: string; casos: string; time: string; contato: string };
   pranchas: {
     rotulo: string;
     titulo: string;
@@ -400,68 +299,6 @@ export interface Cenas {
     };
     itens: Prancha[];
   };
-  construi: {
-    rotulo: string;
-    anterior: string;
-    proximo: string;
-    gargalo: string;
-    resultado: string;
-    porTras: string;
-    casoCompleto: string;
-    agente: {
-      instrucao: string;
-      ficticia: string;
-      simulacoes: Simulacao[];
-    };
-    contratos: {
-      instrucao: string;
-      ficticio: string;
-      passos: [string, string, string, string];
-      campos: { prazo: string; financiado: string; parcela: string };
-      taxaEfetiva: string;
-      mediaPublicada: string;
-      acima: string;
-      dentro: string;
-      fala: [string, string];
-    };
-    ingestao: {
-      linhaALinha: string;
-      emColunas: string;
-      memoria: string;
-      tabela: string;
-      estadoLinha: string;
-      estadoColuna: string;
-      persistido: string;
-      escala: string;
-      fala: [string, string];
-    };
-    laudo: {
-      gerar: string;
-      faltou: string;
-      checklist: string;
-      etapa: string;
-      projeto: string;
-      conclusao: string;
-      chamada: string;
-      secao: string;
-      pendencia: string;
-      rodape: string;
-      fala: [string, string];
-    };
-    milhas: {
-      preco: string;
-      milhas: string;
-      taxas: string;
-      milheiro: string;
-      emMilhas: string;
-      emDinheiro: string;
-      vereditoMilhas: string;
-      vereditoDinheiro: string;
-      nota: string;
-      verNoAr: string;
-      fala: [string, string];
-    };
-  };
   time: {
     rotulo: string;
     titulo: [string, string];
@@ -479,11 +316,6 @@ export interface Cenas {
     texto: string;
     fala: string;
   };
-}
-
-/** O caso em destaque, ou o primeiro se nenhum estiver marcado. */
-export function casoDestaque(conteudo: Conteudo): Caso {
-  return conteudo.casos.find((c) => c.destaque) ?? conteudo.casos[0];
 }
 
 export function casoPorSlug(conteudo: Conteudo, slug: string): Caso | undefined {

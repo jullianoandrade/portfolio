@@ -36,7 +36,7 @@ const TAM = 56;
 const FEIXES = 3;
 const ESTREITA = "(max-width: 639px)";
 
-/* A conta das milhas: a mesma da versão simplificada da bancada. */
+/* A conta das milhas, numa passagem de exemplo. */
 const PRECO = 1800;
 const MILHARES = 60;
 const TAXAS = 80;

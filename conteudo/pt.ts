@@ -16,26 +16,6 @@ export const pt: Conteudo = {
     nome: "Juliano Andrade",
     titulo: "AI Engineer",
     localizacao: "Gravataí, RS · Brasil",
-    arco: [
-      "Entrei no Grupo Studio como o primeiro profissional de automação da empresa. Não havia área, não havia processo e não havia ferramenta — havia planilha, portal de governo e muita gente repetindo a mesma tarefa.",
-      "Montei a prática do zero: escolhi as ferramentas, defini como um robô entra em produção e como ele avisa quando quebra, e treinei o time que veio depois. É por isso que meu repertório é largo — eu era o único, então passei por tudo.",
-      "Hoje meu trabalho é desenhar sistemas de IA que aguentam produção: agentes que conversam com clientes reais, recuperação sobre base própria, avaliação automatizada rodando em CI. O domínio mudou várias vezes — varejo, jurídico, trabalhista, consumo. O que não muda é o tipo de problema: transformar trabalho manual em sistema que dá para confiar.",
-    ],
-    trajetoria: [
-      {
-        periodo: "nov/2025 — hoje",
-        cargo: "Engenheiro de IA e Automação",
-        organizacao: "Grupo Studio",
-        descricao:
-          "Primeiro profissional de automação da empresa. Estruturei a área, e hoje construo agentes e sistemas de IA além de mentorar o time.",
-      },
-      {
-        periodo: "2024 — 2028",
-        cargo: "Ciência da Computação",
-        organizacao: "Unisinos",
-        descricao: "Graduação em andamento, iniciada na La Salle e transferida para a Unisinos. Conclusão prevista em 2028.",
-      },
-    ],
     email: "juliano.andrade.cs@gmail.com",
     linkedin: "https://www.linkedin.com/in/jullianoandrade/",
     github: "https://github.com/jullianoandrade",
@@ -43,7 +23,6 @@ export const pt: Conteudo = {
 
   interface: {
     navegacao: {
-      passei: "Por onde passei",
       casos: "O que eu construí",
       time: "O time",
       contato: "Fale comigo",
@@ -53,7 +32,6 @@ export const pt: Conteudo = {
       `${sistemas} sistemas em ${dominios.length} domínios: ${new Intl.ListFormat("pt-BR").format(dominios)}.`,
     heroSubtitulo:
       "Agentes, recuperação sobre base própria e avaliação automatizada — em varejo, jurídico, trabalhista e consumo. Cheguei numa empresa onde não havia área de automação e montei a prática do zero.",
-    verCaso: "Ver o caso",
     voltar: "Todos os casos",
     rotulos: {
       papel: "Meu papel",
@@ -64,8 +42,6 @@ export const pt: Conteudo = {
       resultado: "Resultado",
       aprendizado: "O que levei disso",
       stack: "Stack",
-      dominio: "Domínio",
-      periodo: "Período",
       escolha: "Escolhi",
       descartado: "Descartei",
       custo: "Custou",
@@ -116,56 +92,10 @@ export const pt: Conteudo = {
     },
   },
 
-  capacidades: [
-    {
-      id: "agentes",
-      titulo: "Agentes e orquestração",
-      descricao:
-        "Conversa longa não cabe num prompt. Desenho o fluxo como grafo de estado tipado, com rota explícita, memória persistida fora do processo e caminho de saída para um humano.",
-      casos: ["agente-conversacional"],
-    },
-    {
-      id: "recuperacao",
-      titulo: "Recuperação e contexto",
-      descricao:
-        "RAG quando a pergunta é conceitual, catálogo determinístico quando a resposta precisa ser exata. Saber qual dos dois usar é metade do trabalho.",
-      casos: ["agente-conversacional"],
-    },
-    {
-      id: "confiabilidade",
-      titulo: "Confiabilidade e privacidade",
-      descricao:
-        "Modelo que não é medido regride em silêncio, e dado pessoal que entra num prompt não volta. Avaliação automatizada com saída binária para CI, barreira verificando a saída, e mascaramento antes da inferência em vez de confiança na política do fornecedor.",
-      casos: ["agente-conversacional", "laudo-enquadramento", "contratos-bancarios"],
-    },
-    {
-      id: "produto",
-      titulo: "Do protótipo ao produto",
-      descricao:
-        "A distância entre demo e produção é feita de rate limit, retry, custo por chamada e o que acontece quando a API de terceiro cai. É onde passo a maior parte do tempo.",
-      casos: ["agente-conversacional", "economize-milhas", "laudo-enquadramento"],
-    },
-    {
-      id: "dados",
-      titulo: "Dados em escala",
-      descricao:
-        "Quando o volume cresce, o ganho raramente vem de otimizar o código que existe — vem de mudar o formato em que o dado é lido e de cortar trabalho que não precisava acontecer.",
-      casos: ["ingestao-em-escala"],
-    },
-  ],
 
   casos: [
     {
       slug: "agente-conversacional",
-      vitrine: {
-        etiqueta: "clientes",
-        detalhe: "3 empresas, mesma arquitetura",
-        curto: "Atendimento",
-        gargalo:
-          "A pessoa escreve em rajada, o canal reentrega a mensagem e a conversa precisa lembrar de ontem.",
-        resultado:
-          "Conduz a conversa inteira e entrega ao especialista com briefing pronto. 14 cenários de avaliação rodam em CI.",
-      },
       titulo: "Um agente que atende no WhatsApp e sabe a hora de chamar um humano",
       resumo:
         "Atendimento consultivo por WhatsApp: entende a necessidade, recomenda a partir de catálogo próprio, responde dúvida conceitual por RAG e passa para um especialista com briefing pronto.",
@@ -175,7 +105,6 @@ export const pt: Conteudo = {
         tipo: "solo",
         descricao: "Do desenho do grafo ao deploy, incluindo os guardrails e a suíte de avaliação.",
       },
-      destaque: true,
       confidencial: true,
       metricas: [
         // PENDENTE: números de produção (conversas atendidas, taxa de handoff,
@@ -292,14 +221,6 @@ export const pt: Conteudo = {
 
     {
       slug: "economize-milhas",
-      vitrine: {
-        etiqueta: "proprio",
-        detalhe: "Código aberto",
-        curto: "Milhas",
-        gargalo:
-          "Todo comparador responde igual para todo mundo, como se a milha tivesse um preço universal.",
-        resultado: "No ar, com o código aberto e 328 testes cobrindo do cálculo à interface.",
-      },
       titulo: "Esta passagem vale mais em milhas ou em dinheiro?",
       resumo:
         "A resposta muda conforme quem pergunta: quem tem cartão sem anuidade acumula milha a custo quase zero, quem compra ponto paga caro. O app calcula para o custo por milheiro de cada pessoa.",
@@ -309,7 +230,6 @@ export const pt: Conteudo = {
         tipo: "solo",
         descricao: "Produto autoral: ideia, modelo de cálculo, interface, testes e deploy.",
       },
-      destaque: false,
       confidencial: false,
       metricas: [
         { valor: "328", rotulo: "testes automatizados", periodo: "out/2026" },
@@ -356,15 +276,6 @@ export const pt: Conteudo = {
 
     {
       slug: "laudo-enquadramento",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Equipe de Lei do Bem",
-        curto: "Laudo",
-        gargalo:
-          "O primeiro rascunho do laudo consumia horas de especialista, para ser revisado de qualquer forma.",
-        resultado:
-          "O rascunho sai durante a própria reunião. O especialista entra para revisar, não para redigir.",
-      },
       titulo: "Laudo técnico preliminar redigido por modelo de linguagem",
       resumo:
         "Um apresentador percorre um checklist guiado com a empresa avaliada e o sistema redige um laudo preliminar de enquadramento de projetos de PD&I, entregue em PDF.",
@@ -374,7 +285,6 @@ export const pt: Conteudo = {
         tipo: "solo",
         descricao: "Da porta de acesso à geração do PDF, incluindo os prompts que redigem o laudo.",
       },
-      destaque: false,
       confidencial: true,
       metricas: [
         { valor: "5", rotulo: "etapas no checklist guiado", periodo: "versão atual" },
@@ -417,15 +327,6 @@ export const pt: Conteudo = {
 
     {
       slug: "ingestao-em-escala",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Operacional",
-        curto: "16 mi de linhas",
-        gargalo:
-          "Milhões de eventos trabalhistas para cruzar num notebook de trabalho. Linha a linha, em memória, a importação arrastava.",
-        resultado:
-          "Mais de 16 milhões de linhas cruzadas em hardware de escritório, sem infraestrutura dedicada.",
-      },
       titulo: "Dezesseis milhões de linhas rodando no notebook do analista",
       resumo:
         "Plataforma que lê arquivos de eventos trabalhistas compactados, converte para formato colunar e cruza os eventos entre si para apurar créditos previdenciários.",
@@ -436,7 +337,6 @@ export const pt: Conteudo = {
         descricao:
           "Estruturei o backend. A arquitetura de ingestão que fez os arquivos grandes entrarem rápido foi decidida, testada e implementada por mim.",
       },
-      destaque: false,
       confidencial: true,
       metricas: [
         {
@@ -486,15 +386,6 @@ export const pt: Conteudo = {
 
     {
       slug: "contratos-bancarios",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Equipe jurídica",
-        curto: "Contratos",
-        gargalo:
-          "Dezenas de páginas para achar a cláusula e refazer a conta, num documento cheio de dado pessoal.",
-        resultado:
-          "O especialista revisa em vez de procurar. Cada número vem com a cláusula de onde saiu.",
-      },
       titulo: "Achar juros abusivos em contrato bancário sem mostrar o cliente ao modelo",
       resumo:
         "Arquitetura que extrai e analisa cláusulas de contratos bancários para identificar possíveis juros abusivos, com os dados pessoais mascarados antes de qualquer inferência.",
@@ -505,7 +396,6 @@ export const pt: Conteudo = {
         descricao:
           "Responsável pela construção da arquitetura: extração, análise e a camada de mascaramento que impede dado sensível de chegar ao modelo.",
       },
-      destaque: false,
       confidencial: true,
       // PENDENTE: métricas de produção (contratos analisados, tempo por
       // contrato, taxa de revisão) — só o Juliano tem os números.
@@ -560,96 +450,9 @@ export const pt: Conteudo = {
   cenas: {
     trilho: {
       inicio: "Início",
-      passei: "Por onde passei",
       casos: "O que eu construí",
       time: "O time",
       contato: "Fale comigo",
-    },
-    passei: {
-      rotulo: "Por onde passei",
-      empresa: "Grupo Studio · nov/2025 — hoje",
-      titulo: ["Cinco setores.", "O mesmo olhar."],
-      texto:
-        "Comecei no marketing. Hoje estou perto do jurídico. Em cada setor, a mesma pergunta: onde está o gargalo?",
-      marcos: { inicio: "Início", hoje: "Hoje" },
-      etiquetas: { interno: "Uso interno", clientes: "Para clientes", proprio: "Produto próprio" },
-      convite: "Clique num andar que eu te levo.",
-      setores: [
-        {
-          id: "marketing",
-          nome: "Marketing",
-          marco: "inicio",
-          sistemas: [{ nome: "Quiz de leads com LLM" }],
-          titulo: "Um quiz que qualifica o lead",
-          descricao:
-            "Uma LLM lê as respostas do quiz, orienta o lead para o produto que mais combina, cadastra no CRM e gera um gráfico da similaridade dele com cada produto.",
-          resultados: [],
-          fala: "Foi aqui que tudo começou.",
-          agente: "mensageiro",
-        },
-        {
-          id: "corporate",
-          nome: "Corporate",
-          sistemas: [{ nome: "Classificação de clientes" }],
-          titulo: "Clientes classificados pelos próprios dados",
-          descricao:
-            "Classificação automática de cada cliente a partir dos dados dele, como conta de luz e número de colaboradores.",
-          resultados: [],
-          fala: "Aqui os dados viraram critério.",
-          agente: "triador",
-        },
-        {
-          id: "operacional",
-          nome: "Operacional",
-          sistemas: [
-            { nome: "Fluxos manuais → automáticos" },
-            { nome: "16 mi de linhas", caso: "ingestao-em-escala" },
-          ],
-          titulo: "Do manual ao automático",
-          descricao:
-            "Mapeei o que o time fazia à mão e coloquei para rodar sozinho. Alguns setores ficaram quase 100% automatizados.",
-          etiqueta: "interno",
-          resultados: [
-            { valor: "2×", rotulo: "jobs entregues pelo setor, recorde histórico" },
-            { valor: "4d→1d", rotulo: "análise de cada cliente, de 4 dias para 1" },
-          ],
-          fala: "O operacional foi onde virou rotina.",
-          agente: "vigia",
-        },
-        {
-          id: "lei-do-bem",
-          nome: "Lei do Bem",
-          sistemas: [{ nome: "Laudo técnico com LLM", caso: "laudo-enquadramento" }],
-          titulo: "O laudo que sai durante a reunião",
-          descricao:
-            "Um checklist guiado com a empresa avaliada e um modelo que redige o laudo preliminar de enquadramento, para o especialista revisar.",
-          etiqueta: "interno",
-          resultados: [],
-          fala: "Aqui o modelo escreve e o especialista revisa.",
-          agente: "arquiteto",
-        },
-        {
-          id: "juridico",
-          nome: "Jurídico",
-          marco: "hoje",
-          sistemas: [
-            { nome: "Plataforma do jurídico" },
-            { nome: "Juros em contrato", caso: "contratos-bancarios" },
-          ],
-          titulo: "Inovação dentro do jurídico",
-          descricao:
-            "Hoje toco uma plataforma do braço jurídico e aplico IA onde ela encurta o trabalho. A análise de juros em contrato bancário saiu daqui.",
-          etiqueta: "interno",
-          resultados: [],
-          fala: "É aqui que ele está hoje.",
-          agente: "escriba",
-        },
-      ],
-      porConta: "Por conta própria",
-      proprios: [
-        { sistema: "Agente de atendimento", caso: "agente-conversacional", nota: "Vendido a 3 empresas" },
-        { sistema: "Economize Milhas", caso: "economize-milhas", nota: "No ar · código aberto" },
-      ],
     },
     pranchas: {
       rotulo: "O que eu construí",
@@ -975,97 +778,6 @@ export const pt: Conteudo = {
           cenarios: [],
         },
       ],
-    },
-    construi: {
-      rotulo: "O que eu construí",
-      anterior: "Sistema anterior",
-      proximo: "Próximo sistema",
-      gargalo: "Gargalo",
-      resultado: "Resultado",
-      porTras: "Por trás da entrega",
-      casoCompleto: "Ver o caso completo",
-      agente: {
-        instrucao: "Mande uma mensagem",
-        ficticia: "Conversa fictícia",
-        simulacoes: [
-          {
-            pergunta: "Atendem sábado?",
-            caminho: ["carregar", "entender", "decidir", "agendar", "compor", "guard", "persistir"],
-            dados: [{ no: "agendar", texto: "agenda real: sáb 10h · sáb 14h" }],
-            resposta: "Atendemos! Tenho sábado às 10h ou às 14h. Qual fica melhor?",
-            anfitriao: "arquiteto",
-            fala: ["Repara: o horário veio da agenda de verdade.", "O modelo só escreveu a frase em volta."],
-          },
-          {
-            pergunta: "Quanto custa aquele da loja?",
-            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
-            barrado: "“Fica R$ 1.299 à vista.”",
-            dados: [{ no: "handoff", texto: "briefing" }],
-            resposta: "Esse eu confirmo com um especialista. Já passei seu pedido para ele.",
-            anfitriao: "guardiao",
-            fala: ["Esse preço não está no catálogo. Não passa.", "Chamei um humano, com o resumo da conversa."],
-          },
-          {
-            pergunta: "Quero falar com alguém",
-            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
-            dados: [
-              { no: "carregar", texto: "memória: a conversa de ontem" },
-              { no: "handoff", texto: "briefing" },
-            ],
-            resposta: "Claro. Passei sua conversa para um especialista, ele te chama aqui mesmo.",
-            anfitriao: "mensageiro",
-            fala: ["Ninguém precisa contar a história de novo.", "O especialista recebe o briefing, não a transcrição."],
-          },
-        ],
-      },
-      contratos: {
-        instrucao: "Passe o mouse num número",
-        ficticio: "Contrato fictício",
-        passos: ["Contrato", "Máscara", "Modelo", "Código"],
-        campos: { prazo: "prazo", financiado: "financiado", parcela: "parcela" },
-        taxaEfetiva: "taxa efetiva",
-        mediaPublicada: "média publicada",
-        acima: "Acima da referência",
-        dentro: "Dentro da referência",
-        fala: ["O modelo nunca viu quem assinou.", "Troquei os nomes antes de ele ler."],
-      },
-      ingestao: {
-        linhaALinha: "Linha a linha",
-        emColunas: "Em colunas",
-        memoria: "Memória do notebook",
-        tabela: "Eventos trabalhistas",
-        estadoLinha: "Tudo em memória: a importação arrasta e parece travada.",
-        estadoColuna: "Só as colunas do cruzamento, lidas direto do disco.",
-        persistido: "Conversão gravada em disco: reexecutar não recomeça do zero.",
-        escala: "16 mi+ linhas numa apuração",
-        fala: ["Isso aqui quebrava em escala.", "Em colunas, fora da memória, cabe no notebook."],
-      },
-      laudo: {
-        gerar: "Gerar laudo",
-        faltou: "Faltou uma informação",
-        checklist: "Checklist guiado",
-        etapa: "Etapa",
-        projeto: "Projeto",
-        conclusao: "Conclusão",
-        chamada: "1 chamada",
-        secao: "Seção",
-        pendencia: "Pendência: dado não informado",
-        rodape: "Laudo preliminar · revisão de responsável técnico habilitado",
-        fala: ["O que faltou vira pendência.", "O modelo aponta a lacuna, não preenche."],
-      },
-      milhas: {
-        preco: "Preço em dinheiro (R$)",
-        milhas: "Milhas pedidas",
-        taxas: "Taxas (R$)",
-        milheiro: "Seu custo por milheiro (R$)",
-        emMilhas: "Em milhas",
-        emDinheiro: "Em dinheiro",
-        vereditoMilhas: "Para você, vale mais em milhas.",
-        vereditoDinheiro: "Para você, vale mais pagar em dinheiro.",
-        nota: "Versão simplificada da conta que o app faz.",
-        verNoAr: "Ver o app no ar",
-        fala: ["Mude o seu milheiro e veja a resposta virar.", "A milha não tem preço universal."],
-      },
     },
     time: {
       rotulo: "O time",

@@ -163,7 +163,7 @@ export function Deslize() {
       if (location.hash !== link.hash) history.pushState(null, "", link.hash);
     }
 
-    // Quem precisa trazer uma cena para a tela (a bancada, ao abrir um sistema) pede por aqui.
+    // Quem precisa trazer uma cena para a tela (as pranchas, ao abrir um sistema) pede por aqui.
     function aoPedir(e: Event) {
       const el = document.getElementById((e as CustomEvent<string>).detail);
       if (!el) return;

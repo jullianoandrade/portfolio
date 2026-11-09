@@ -213,7 +213,7 @@ export default async function Home({ params }: { params: Promise<{ idioma: strin
           </div>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Só a primeira fileira: os três que a abertura traz. Os outros
-                estão na bancada, a uma rolagem daqui. */}
+                estão nas pranchas, a uma rolagem daqui. */}
             {ordenados.slice(0, PRIMEIRA_FILEIRA.length).map((caso, i) => {
               const morador = moradores.get(caso.slug);
               return (

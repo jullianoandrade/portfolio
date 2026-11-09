@@ -14,26 +14,6 @@ export const en: Conteudo = {
     nome: "Juliano Andrade",
     titulo: "AI Engineer",
     localizacao: "Gravataí, RS · Brazil",
-    arco: [
-      "I joined Grupo Studio as the company's first automation engineer. There was no team, no process and no tooling — just spreadsheets, government portals and a lot of people repeating the same task.",
-      "I built the practice from zero: picked the tools, defined how a bot reaches production and how it reports its own failures, and trained the people who came after me. That is why my range is wide — I was the only one, so everything crossed my desk.",
-      "Today I design AI systems that survive production: agents that talk to real customers, retrieval over proprietary data, automated evaluation running in CI. The domain has changed several times — retail, legal, payroll, consumer. The problem never does: turn manual work into a system you can trust.",
-    ],
-    trajetoria: [
-      {
-        periodo: "Nov 2025 — present",
-        cargo: "AI & Automation Engineer",
-        organizacao: "Grupo Studio",
-        descricao:
-          "First automation engineer at the company. Built the practice, and today I build agents and AI systems while mentoring the team.",
-      },
-      {
-        periodo: "2024 — 2028",
-        cargo: "BSc Computer Science",
-        organizacao: "Unisinos",
-        descricao: "In progress. Started at La Salle University, transferred to Unisinos. Expected 2028.",
-      },
-    ],
     email: "juliano.andrade.cs@gmail.com",
     linkedin: "https://www.linkedin.com/in/jullianoandrade/",
     github: "https://github.com/jullianoandrade",
@@ -41,7 +21,6 @@ export const en: Conteudo = {
 
   interface: {
     navegacao: {
-      passei: "Where I've worked",
       casos: "What I built",
       time: "The team",
       contato: "Talk to me",
@@ -51,7 +30,6 @@ export const en: Conteudo = {
       `${sistemas} systems across ${dominios.length} domains: ${new Intl.ListFormat("en").format(dominios)}.`,
     heroSubtitulo:
       "Agents, retrieval over proprietary data and automated evaluation — across retail, legal, payroll and consumer products. I joined a company with no automation practice and built one from zero.",
-    verCaso: "Read the case",
     voltar: "All case studies",
     rotulos: {
       papel: "My role",
@@ -62,8 +40,6 @@ export const en: Conteudo = {
       resultado: "Outcome",
       aprendizado: "What I took from it",
       stack: "Stack",
-      dominio: "Domain",
-      periodo: "Period",
       escolha: "Chose",
       descartado: "Rejected",
       custo: "Cost",
@@ -114,54 +90,10 @@ export const en: Conteudo = {
     },
   },
 
-  capacidades: [
-    {
-      id: "agentes",
-      titulo: "Agents and orchestration",
-      descricao:
-        "A long conversation does not fit in a prompt. I model the flow as a typed state graph, with explicit routing, memory persisted outside the process, and a path out to a human.",
-      casos: ["agente-conversacional"],
-    },
-    {
-      id: "recuperacao",
-      titulo: "Retrieval and context",
-      descricao:
-        "RAG when the question is conceptual, a deterministic catalogue when the answer must be exact. Knowing which one applies is half the work.",
-      casos: ["agente-conversacional"],
-    },
-    {
-      id: "confiabilidade",
-      titulo: "Reliability and privacy",
-      descricao:
-        "A model nobody measures regresses quietly, and personal data that enters a prompt does not come back. Automated evaluation with binary exit codes for CI, guardrails that check the output, and masking before inference instead of trust in a vendor policy.",
-      casos: ["agente-conversacional", "laudo-enquadramento", "contratos-bancarios"],
-    },
-    {
-      id: "produto",
-      titulo: "From prototype to product",
-      descricao:
-        "The distance between a demo and production is made of rate limits, retries, cost per call and what happens when someone else's API goes down. That is where most of my time goes.",
-      casos: ["agente-conversacional", "economize-milhas", "laudo-enquadramento"],
-    },
-    {
-      id: "dados",
-      titulo: "Data at scale",
-      descricao:
-        "When volume grows, the win rarely comes from optimising the code that exists — it comes from changing the shape the data is read in, and from cutting work that never needed to happen.",
-      casos: ["ingestao-em-escala"],
-    },
-  ],
 
   casos: [
     {
       slug: "agente-conversacional",
-      vitrine: {
-        etiqueta: "clientes",
-        detalhe: "3 companies, same architecture",
-        curto: "Customer service",
-        gargalo: "People type in bursts, the channel redelivers the message, and the conversation has to remember yesterday.",
-        resultado: "Runs the whole conversation and hands off to a specialist with a ready briefing. 14 eval scenarios run in CI.",
-      },
       titulo: "A WhatsApp agent that knows when to call a human",
       resumo:
         "Consultative support over WhatsApp: understands the need, recommends from a proprietary catalogue, answers conceptual questions through retrieval, and hands off to a specialist with a structured brief.",
@@ -171,7 +103,6 @@ export const en: Conteudo = {
         tipo: "solo",
         descricao: "From graph design to deploy, including the guardrails and the evaluation suite.",
       },
-      destaque: true,
       confidencial: true,
       metricas: [
         {
@@ -283,13 +214,6 @@ export const en: Conteudo = {
 
     {
       slug: "economize-milhas",
-      vitrine: {
-        etiqueta: "proprio",
-        detalhe: "Open source",
-        curto: "Miles",
-        gargalo: "Every comparison tool gives everyone the same answer, as if miles had a universal price.",
-        resultado: "Live, open source, with 328 tests covering everything from the math to the interface.",
-      },
       titulo: "Is this flight worth more in miles or in cash?",
       resumo:
         "The answer depends on who is asking: a fee-free card earns miles at almost no cost, buying points is expensive. The app computes it against each person's own cost per thousand miles.",
@@ -299,7 +223,6 @@ export const en: Conteudo = {
         tipo: "solo",
         descricao: "My own product: idea, pricing model, interface, tests and deploy.",
       },
-      destaque: false,
       confidencial: false,
       metricas: [
         { valor: "328", rotulo: "automated tests", periodo: "Oct 2026" },
@@ -345,13 +268,6 @@ export const en: Conteudo = {
 
     {
       slug: "laudo-enquadramento",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Innovation incentive team",
-        curto: "Report",
-        gargalo: "The first draft of the report took hours of specialist time, only to be reviewed anyway.",
-        resultado: "The draft comes out during the meeting itself. The specialist steps in to review, not to write.",
-      },
       titulo: "A preliminary technical opinion drafted by a language model",
       resumo:
         "A presenter walks a guided checklist with the company being assessed, and the system drafts a preliminary eligibility opinion for R&D projects, delivered as a PDF.",
@@ -361,7 +277,6 @@ export const en: Conteudo = {
         tipo: "solo",
         descricao: "From the access gate to PDF generation, including the prompts that draft the opinion.",
       },
-      destaque: false,
       confidencial: true,
       metricas: [
         { valor: "5", rotulo: "steps in the guided checklist", periodo: "current version" },
@@ -402,13 +317,6 @@ export const en: Conteudo = {
 
     {
       slug: "ingestao-em-escala",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Operations",
-        curto: "16M rows",
-        gargalo: "Millions of payroll events to cross-check on a work laptop. Row by row, in memory, the import dragged.",
-        resultado: "Over 16 million rows cross-checked on office hardware, with no dedicated infrastructure.",
-      },
       titulo: "Sixteen million rows running on an analyst's laptop",
       resumo:
         "A platform that reads compressed payroll-event archives, converts them to a columnar format and cross-references the events to calculate recoverable social security credits.",
@@ -419,7 +327,6 @@ export const en: Conteudo = {
         descricao:
           "I built the backend. The ingestion architecture that made large archives load quickly was decided, tested and implemented by me.",
       },
-      destaque: false,
       confidencial: true,
       // Sem métrica até existir número que o autor possa garantir. Os que havia
       // aqui vinham da documentação de um colega, não de medição própria.
@@ -471,13 +378,6 @@ export const en: Conteudo = {
 
     {
       slug: "contratos-bancarios",
-      vitrine: {
-        etiqueta: "interno",
-        detalhe: "Legal team",
-        curto: "Contracts",
-        gargalo: "Dozens of pages to find the clause and redo the math, in a document full of personal data.",
-        resultado: "The specialist reviews instead of searching. Every number comes with the clause it came from.",
-      },
       titulo: "Finding abusive interest in loan contracts without showing the model who signed",
       resumo:
         "An architecture that extracts and analyses clauses in bank loan contracts to flag potentially abusive interest, with personal data masked before any inference runs.",
@@ -488,7 +388,6 @@ export const en: Conteudo = {
         descricao:
           "Responsible for building the architecture: extraction, analysis, and the masking layer that keeps personal data from reaching the model.",
       },
-      destaque: false,
       confidencial: true,
       metricas: [],
       problema:
@@ -540,96 +439,9 @@ export const en: Conteudo = {
   cenas: {
     trilho: {
       inicio: "Start",
-      passei: "Where I've worked",
       casos: "What I built",
       time: "The team",
       contato: "Talk to me",
-    },
-    passei: {
-      rotulo: "Where I've worked",
-      empresa: "Grupo Studio · Nov 2025 — present",
-      titulo: ["Five departments.", "One way of seeing."],
-      texto:
-        "I started in marketing. Today I work close to legal. In every department, the same question: where is the bottleneck?",
-      marcos: { inicio: "Start", hoje: "Today" },
-      etiquetas: { interno: "Internal use", clientes: "For clients", proprio: "Own product" },
-      convite: "Pick a floor and I'll take you there.",
-      setores: [
-        {
-          id: "marketing",
-          nome: "Marketing",
-          marco: "inicio",
-          sistemas: [{ nome: "LLM lead quiz" }],
-          titulo: "A quiz that qualifies the lead",
-          descricao:
-            "An LLM reads the quiz answers, points the lead to the best-fitting product, registers them in the CRM and plots how similar they are to each product.",
-          resultados: [],
-          fala: "This is where it all started.",
-          agente: "mensageiro",
-        },
-        {
-          id: "corporate",
-          nome: "Corporate",
-          sistemas: [{ nome: "Client classification" }],
-          titulo: "Clients classified by their own data",
-          descricao:
-            "Automatic classification of each client from their own data, such as the electricity bill and headcount.",
-          resultados: [],
-          fala: "Here the data became the criteria.",
-          agente: "triador",
-        },
-        {
-          id: "operacional",
-          nome: "Operations",
-          sistemas: [
-            { nome: "Manual flows → automatic" },
-            { nome: "16M rows", caso: "ingestao-em-escala" },
-          ],
-          titulo: "From manual to automatic",
-          descricao:
-            "I mapped what the team did by hand and made it run on its own. Some departments became almost 100% automated.",
-          etiqueta: "interno",
-          resultados: [
-            { valor: "2×", rotulo: "jobs delivered by the department, an all-time record" },
-            { valor: "4d→1d", rotulo: "analysis per client, from 4 days to 1" },
-          ],
-          fala: "Operations is where it became routine.",
-          agente: "vigia",
-        },
-        {
-          id: "lei-do-bem",
-          nome: "Innovation incentive",
-          sistemas: [{ nome: "LLM technical report", caso: "laudo-enquadramento" }],
-          titulo: "The report that comes out during the meeting",
-          descricao:
-            "A guided checklist with the company being assessed, and a model that drafts the preliminary eligibility report for the specialist to review.",
-          etiqueta: "interno",
-          resultados: [],
-          fala: "Here the model writes and the specialist reviews.",
-          agente: "arquiteto",
-        },
-        {
-          id: "juridico",
-          nome: "Legal",
-          marco: "hoje",
-          sistemas: [
-            { nome: "Legal platform" },
-            { nome: "Loan contract interest", caso: "contratos-bancarios" },
-          ],
-          titulo: "Innovation inside legal",
-          descricao:
-            "Today I run a platform for the legal arm and apply AI wherever it shortens the work. The loan contract interest analysis came from here.",
-          etiqueta: "interno",
-          resultados: [],
-          fala: "This is where he is today.",
-          agente: "escriba",
-        },
-      ],
-      porConta: "On my own",
-      proprios: [
-        { sistema: "Customer service agent", caso: "agente-conversacional", nota: "Sold to 3 companies" },
-        { sistema: "Economize Milhas", caso: "economize-milhas", nota: "Live · open source" },
-      ],
     },
     pranchas: {
       rotulo: "What I've built",
@@ -955,97 +767,6 @@ export const en: Conteudo = {
           cenarios: [],
         },
       ],
-    },
-    construi: {
-      rotulo: "What I built",
-      anterior: "Previous system",
-      proximo: "Next system",
-      gargalo: "Bottleneck",
-      resultado: "Result",
-      porTras: "Behind the delivery",
-      casoCompleto: "Read the full case",
-      agente: {
-        instrucao: "Send a message",
-        ficticia: "Fictional conversation",
-        simulacoes: [
-          {
-            pergunta: "Open on Saturday?",
-            caminho: ["carregar", "entender", "decidir", "agendar", "compor", "guard", "persistir"],
-            dados: [{ no: "agendar", texto: "real calendar: Sat 10am · Sat 2pm" }],
-            resposta: "We are! I have Saturday at 10am or 2pm. Which works better?",
-            anfitriao: "arquiteto",
-            fala: ["Notice: the time slots came from the real calendar.", "The model only wrote the sentence around them."],
-          },
-          {
-            pergunta: "How much is the one from the store?",
-            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
-            barrado: "“It's R$ 1,299 upfront.”",
-            dados: [{ no: "handoff", texto: "briefing" }],
-            resposta: "Let me confirm that one with a specialist. I've already passed your request on.",
-            anfitriao: "guardiao",
-            fala: ["That price isn't in the catalog. Rejected.", "I called a human, with a summary of the chat."],
-          },
-          {
-            pergunta: "I want to talk to someone",
-            caminho: ["carregar", "entender", "decidir", "recuperar", "compor", "guard", "persistir", "handoff"],
-            dados: [
-              { no: "carregar", texto: "memory: yesterday's conversation" },
-              { no: "handoff", texto: "briefing" },
-            ],
-            resposta: "Sure. I passed your conversation to a specialist, who will reach you right here.",
-            anfitriao: "mensageiro",
-            fala: ["Nobody has to tell the story again.", "The specialist gets the briefing, not the transcript."],
-          },
-        ],
-      },
-      contratos: {
-        instrucao: "Hover a number",
-        ficticio: "Fictional contract",
-        passos: ["Contract", "Mask", "Model", "Code"],
-        campos: { prazo: "term", financiado: "financed", parcela: "installment" },
-        taxaEfetiva: "effective rate",
-        mediaPublicada: "published average",
-        acima: "Above the reference",
-        dentro: "Within the reference",
-        fala: ["The model never saw who signed.", "I swapped the names before it read."],
-      },
-      ingestao: {
-        linhaALinha: "Row by row",
-        emColunas: "Columnar",
-        memoria: "Laptop memory",
-        tabela: "Payroll events",
-        estadoLinha: "Everything in memory: the import drags and looks frozen.",
-        estadoColuna: "Only the columns the join needs, read straight from disk.",
-        persistido: "Conversion saved to disk: re-running doesn't start from zero.",
-        escala: "16M+ rows in one run",
-        fala: ["This used to break at scale.", "Columnar and out of core, it fits on a laptop."],
-      },
-      laudo: {
-        gerar: "Draft report",
-        faltou: "A piece of information is missing",
-        checklist: "Guided checklist",
-        etapa: "Step",
-        projeto: "Project",
-        conclusao: "Conclusion",
-        chamada: "1 call",
-        secao: "Section",
-        pendencia: "Pending: data not provided",
-        rodape: "Preliminary report · review by a qualified technical lead",
-        fala: ["What's missing becomes a pending item.", "The model points at the gap, it doesn't fill it."],
-      },
-      milhas: {
-        preco: "Cash price (R$)",
-        milhas: "Miles required",
-        taxas: "Fees (R$)",
-        milheiro: "Your cost per 1,000 miles (R$)",
-        emMilhas: "With miles",
-        emDinheiro: "With cash",
-        vereditoMilhas: "For you, miles are worth more.",
-        vereditoDinheiro: "For you, paying cash is worth more.",
-        nota: "Simplified version of the math the app does.",
-        verNoAr: "Open the live app",
-        fala: ["Change your cost per 1,000 and watch the answer flip.", "Miles have no universal price."],
-      },
     },
     time: {
       rotulo: "The team",

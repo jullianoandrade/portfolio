@@ -21,4 +21,3 @@ export function outroIdioma(idioma: Idioma): Idioma {
 }
 
 export { IDIOMAS };
-export type { Conteudo, Idioma };
