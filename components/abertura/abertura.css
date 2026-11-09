@@ -214,7 +214,6 @@ html.abertura.e-fim [data-obra="chamada"] {
   transition-delay: 0.3s;
 }
 
-html.abertura.e-fim [data-obra="credito"],
 html.abertura.e-fim [data-obra="resto"],
 html.abertura.e-fim [data-pouso="juliano"] {
   opacity: 1;

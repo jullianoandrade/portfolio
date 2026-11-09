@@ -2,12 +2,12 @@
    As cenas da home, depois da abertura.
 
    Cada cena ocupa a tela; o encaixe da rolagem mora em globals.css. Aqui
-   fica só o que é de cada cena: o prédio, a bancada, o time, o contato e
-   o trilho do Vigia. Movimento sempre com saída para `reduce`.
+   fica só o que é de cada cena: as pranchas, o time, o contato e o
+   trilho do Vigia. Movimento sempre com saída para `reduce`.
    ============================================================ */
 
 @layer components {
-/* ---------------------------------------------------- anfitrião + balão */
+/* ---------------------------------------------------------------- balão */
 
 .balao {
   position: relative;
@@ -41,10 +41,6 @@
 }
 
 /* A fala troca: entra de leve, para o olho perceber que mudou. */
-.balao-texto {
-  animation: fala-entra 0.35s ease-out;
-}
-
 @keyframes fala-entra {
   from {
     opacity: 0;
@@ -69,40 +65,7 @@
   image-rendering: pixelated;
 }
 
-/* ----------------------------------------------------------------- selo */
-
-/* "Uso interno", "Para clientes": para quem o sistema foi feito. */
-.selo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-  border: 1px solid var(--acento);
-  border-radius: 3px;
-  padding: 3px 9px;
-  color: var(--acento);
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 10.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-/* --------------------------------------------------------------- prédio */
-
-.predio-telhado {
-  height: 34px;
-  background: linear-gradient(to top right, transparent calc(50% - 1px), var(--regua-forte) 50%, transparent calc(50% + 1px)) left / 50% 100% no-repeat,
-    linear-gradient(to top left, transparent calc(50% - 1px), var(--regua-forte) 50%, transparent calc(50% + 1px)) right / 50% 100% no-repeat;
-}
-
-.andar {
-  transition:
-    background-color 0.35s,
-    border-color 0.35s;
-}
-
-.cabine {
-  transition: top 0.7s cubic-bezier(0.65, 0, 0.35, 1);
-}
+/* ----------------------------------------------------------------- time */
 
 .painel-andar {
   animation: painel-entra 0.4s ease-out;
@@ -114,61 +77,6 @@
     translate: 8px 0;
   }
 }
-
-/* -------------------------------------------------------------- bancada */
-
-.grafo-no rect {
-  transition:
-    stroke 0.25s,
-    fill 0.25s;
-}
-
-.grafo-no text {
-  transition: fill 0.25s;
-}
-
-.grafo-aresta {
-  transition: stroke 0.25s;
-}
-
-.grafo-pulso {
-  transition:
-    cx 0.38s ease-in-out,
-    cy 0.38s ease-in-out;
-  filter: drop-shadow(0 0 6px #f0cf86);
-}
-
-.chip-dado {
-  animation: fala-entra 0.3s ease-out;
-}
-
-.carimbo-guard {
-  animation: carimbar 0.32s cubic-bezier(0.2, 1.6, 0.4, 1);
-  rotate: -8deg;
-}
-
-@keyframes carimbar {
-  from {
-    opacity: 0;
-    scale: 1.8;
-  }
-}
-
-.linha-doc {
-  transition: fill 0.25s;
-}
-
-.celula {
-  transition: fill 0.2s;
-}
-
-.barra-memoria {
-  transition:
-    width 0.3s linear,
-    background-color 0.3s;
-}
-
-/* ----------------------------------------------------------------- time */
 
 .agente-fileira {
   transition:
@@ -1086,17 +994,11 @@
 
 @media (prefers-reduced-motion: reduce) {
   .familiar-vivo,
-  .balao-texto,
-  .painel-andar,
-  .chip-dado,
-  .carimbo-guard {
+  .painel-andar {
     animation: none;
   }
 
-  .cabine,
-  .grafo-pulso,
-  .mensageiro-carta,
-  .barra-memoria {
+  .mensageiro-carta {
     transition: none;
   }
 }
@@ -1105,14 +1007,8 @@
 
 /* ------------------------------------------------------------- estados
 
-   Fora da camada de propósito: o estado (andar ativo, cena atual) precisa
+   Fora da camada de propósito: o estado (agente ativo, cena atual) precisa
    vencer os utilitários do Tailwind que dão a cor de repouso. */
-
-.andar[data-ativo="true"] {
-  background: rgb(201 164 92 / 0.1);
-  border-color: var(--acento);
-  z-index: 1;
-}
 
 .agente-fileira[data-ativo="true"] {
   scale: 1.55;

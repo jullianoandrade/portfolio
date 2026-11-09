@@ -29,9 +29,6 @@
   --regua: #2b343d;
   --regua-forte: #3a4651;
 
-  --sombra: none;
-
-  --medida: 68ch;
   /* Altura do cabeçalho fixo: cada cena encaixa logo abaixo dele. */
   --topo: 4.5rem;
   --borda-raio: 10px;
