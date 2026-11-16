@@ -803,7 +803,7 @@ export const en: Conteudo = {
         mensageiro: {
           regra: "Deliver with context, not raw.",
           porQue:
-            "Handing a conversation to a human means delivering a ready briefing, not the whole transcript.",
+            "Whoever receives the work needs to decide, not investigate. I deliver the conclusion along with what backs it; the raw material stays filed away for whoever wants to check.",
           onde: { texto: "Customer service agent: the handoff with briefing", caso: "agente-conversacional" },
         },
         vigia: {

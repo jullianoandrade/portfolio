@@ -814,7 +814,7 @@ export const pt: Conteudo = {
         mensageiro: {
           regra: "Entregar com contexto, não cru.",
           porQue:
-            "Passar uma conversa para um humano é entregar o briefing pronto, não a transcrição inteira.",
+            "Quem recebe o trabalho precisa decidir, não investigar. Entrego a conclusão junto com o que a sustenta; o material bruto fica guardado para quem quiser conferir.",
           onde: { texto: "Agente de atendimento: o handoff com briefing", caso: "agente-conversacional" },
         },
         vigia: {
