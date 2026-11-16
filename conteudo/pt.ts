@@ -796,7 +796,7 @@ export const pt: Conteudo = {
         triador: {
           regra: "Separar antes de processar.",
           porQue:
-            "O trabalho pesado só fica rápido quando o dado chega separado: em colunas, fora da memória, convertido uma vez.",
+            "O trabalho pesado só fica rápido quando o dado chega pronto para ele. Gasto o tempo em separar e converter uma vez, em vez de repetir o esforço a cada execução.",
           onde: { texto: "16 milhões de linhas: a leitura em colunas", caso: "ingestao-em-escala" },
         },
         guardiao: {
@@ -819,7 +819,8 @@ export const pt: Conteudo = {
         },
         vigia: {
           regra: "Penso funcionando lá na frente.",
-          porQue: "Analiso tudo: segurança, escala. Penso no que estou fazendo funcionando lá na frente.",
+          porQue:
+            "Todo sistema quebra num horário ruim. O que alguém vai precisar nessa hora — log, alerta e caminho de volta — eu deixo pronto antes, não depois do primeiro susto.",
           onde: { texto: "Agente de atendimento: rollback sem redeploy", caso: "agente-conversacional" },
         },
       },

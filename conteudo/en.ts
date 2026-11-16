@@ -785,7 +785,7 @@ export const en: Conteudo = {
         triador: {
           regra: "Sort before you process.",
           porQue:
-            "Heavy work only gets fast when the data arrives sorted: columnar, out of core, converted once.",
+            "Heavy work only gets fast when the data arrives ready for it. I spend the time sorting and converting once, instead of repeating the effort on every run.",
           onde: { texto: "16 million rows: the columnar read", caso: "ingestao-em-escala" },
         },
         guardiao: {
@@ -808,7 +808,8 @@ export const en: Conteudo = {
         },
         vigia: {
           regra: "I think about it working down the road.",
-          porQue: "I analyze everything: security, scale. I think about what I'm building working down the road.",
+          porQue:
+            "Every system breaks at a bad hour. What someone will need then — logs, an alert and a way back — I leave ready beforehand, not after the first scare.",
           onde: { texto: "Customer service agent: rollback without redeploy", caso: "agente-conversacional" },
         },
       },
